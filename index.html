@@ -10,242 +10,298 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app" id="app">
+<div class="app" id="app">
 
-    <div class="toast" id="toast">Entry saved ✓</div>
+  <div class="toast" id="toast">Entry saved ✓</div>
 
-    <!-- Header -->
-    <header class="header">
-      <div class="arch-decoration" aria-hidden="true">
-        <svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" width="120" height="60">
-          <path d="M10,60 Q10,10 60,10 Q110,10 110,60" fill="none" stroke="#c9a96e" stroke-width="0.8" opacity="0.6"/>
-          <path d="M20,60 Q20,18 60,18 Q100,18 100,60" fill="none" stroke="#c9a96e" stroke-width="0.7" opacity="0.5"/>
-          <path d="M30,60 Q30,26 60,26 Q90,26 90,60" fill="none" stroke="#c9a96e" stroke-width="0.6" opacity="0.4"/>
-        </svg>
-      </div>
-      <h1>Hormone Phase Tracker</h1>
-      <div class="date-row">
-        <button class="date-nav" onclick="changeDate(-1)" aria-label="Previous day">&#8249;</button>
-        <span class="date-display" id="dateDisplay"></span>
-        <button class="date-nav" onclick="changeDate(1)" aria-label="Next day">&#8250;</button>
-      </div>
-    </header>
-
-    <!-- Phase Selector -->
-    <div class="cycle-bar" role="group" aria-label="Cycle phase selector">
-      <button class="cycle-phase" id="ph-menstruation" onclick="setPhase('menstruation')">
-        Menstruation<span class="days">days 1–6</span>
-      </button>
-      <button class="cycle-phase" id="ph-follicular" onclick="setPhase('follicular')">
-        Follicular<span class="days">days 6–14</span>
-      </button>
-      <button class="cycle-phase" id="ph-ovulation" onclick="setPhase('ovulation')">
-        Ovulation<span class="days">days 14–16</span>
-      </button>
-      <button class="cycle-phase" id="ph-luteal" onclick="setPhase('luteal')">
-        Luteal<span class="days">days 17–28</span>
-      </button>
+  <!-- Header -->
+  <header class="header">
+    <div class="arch-decoration" aria-hidden="true">
+      <svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" width="120" height="60">
+        <path d="M10,60 Q10,10 60,10 Q110,10 110,60" fill="none" stroke="#c9a96e" stroke-width="0.8" opacity="0.6"/>
+        <path d="M20,60 Q20,18 60,18 Q100,18 100,60" fill="none" stroke="#c9a96e" stroke-width="0.7" opacity="0.5"/>
+        <path d="M30,60 Q30,26 60,26 Q90,26 90,60" fill="none" stroke="#c9a96e" stroke-width="0.6" opacity="0.4"/>
+      </svg>
     </div>
+    <h1>Hormone Phase Tracker</h1>
+    <div class="date-row">
+      <button class="date-nav" onclick="changeDate(-1)" aria-label="Previous day">&#8249;</button>
+      <span class="date-display" id="dateDisplay"></span>
+      <button class="date-nav" onclick="changeDate(1)" aria-label="Next day">&#8250;</button>
+    </div>
+  </header>
 
-    <!-- Phase Banner -->
-    <div class="phase-banner" id="phaseBanner">
-      <span class="phase-moon" id="phaseMoon" aria-hidden="true">🌙</span>
+  <div style="text-align:center;margin:0.75rem 0 0.25rem"><a href="phases.html" style="font-family:Jost,sans-serif;font-size:11px;letter-spacing:0.1em;color:#9a8a78;text-transform:uppercase;text-decoration:none;border:0.5px solid #d4c4a8;padding:7px 18px;border-radius:20px;display:inline-block">Phase guide &amp; reflections →</a></div>
+
+  <!-- Cycle Intelligence Banner -->
+  <div class="cycle-intel" id="cycleIntel">
+    <div class="intel-phase">
+      <span class="intel-moon" id="intelMoon">🌙</span>
       <div>
-        <div class="phase-label">Current phase</div>
-        <div class="phase-name" id="phaseName">Select your phase above</div>
+        <div class="intel-label">cycle phase</div>
+        <div class="intel-name" id="intelName">Log a period start to begin tracking</div>
       </div>
-      <span class="phase-hint" id="phaseHint"></span>
     </div>
+    <div class="intel-stats" id="intelStats"></div>
+  </div>
 
-    <!-- Sleep -->
-    <section class="section">
-      <div class="section-header" onclick="toggle('sleep')" role="button" aria-expanded="true" aria-controls="sleep">
-        <h2>Sleep</h2>
-        <span class="section-toggle open" id="tog-sleep" aria-hidden="true">▲</span>
-      </div>
-      <div class="section-body" id="sleep">
-        <div class="row-2">
-          <div class="field">
-            <label for="bedtime">Bedtime</label>
-            <input type="time" id="bedtime" />
-          </div>
-          <div class="field">
-            <label for="waketime">Wake time</label>
-            <input type="time" id="waketime" />
-          </div>
-        </div>
-        <div class="field">
-          <label for="totalhours">Total hours</label>
-          <input type="text" id="totalhours" placeholder="e.g. 7.5" />
-        </div>
-        <div class="field">
-          <label for="nightwakings">Night wakings (time + reason)</label>
-          <input type="text" id="nightwakings" placeholder="e.g. 2am — thirsty" />
-        </div>
-        <div class="field">
-          <label for="wakefeeling">How do you feel waking up?</label>
-          <input type="text" id="wakefeeling" placeholder="e.g. groggy, refreshed..." />
-        </div>
-      </div>
-    </section>
+  <!-- Phase Selector (manual override) -->
+  <div class="cycle-bar" role="group" aria-label="Cycle phase selector">
+    <button class="cycle-phase" id="ph-menstruation" onclick="setPhase('menstruation')">Menstruation<span class="days">days 1–6</span></button>
+    <button class="cycle-phase" id="ph-follicular"   onclick="setPhase('follicular')">Follicular<span class="days">days 6–14</span></button>
+    <button class="cycle-phase" id="ph-ovulation"    onclick="setPhase('ovulation')">Ovulation<span class="days">days 14–16</span></button>
+    <button class="cycle-phase" id="ph-luteal"       onclick="setPhase('luteal')">Luteal<span class="days">days 17–28</span></button>
+  </div>
+  <p class="override-note">Manual override — or log your period below to auto-detect</p>
 
-    <!-- Energy & Mood -->
-    <section class="section">
-      <div class="section-header" onclick="toggle('energy')" role="button" aria-expanded="true" aria-controls="energy">
-        <h2>Energy &amp; Mood</h2>
-        <span class="section-toggle open" id="tog-energy" aria-hidden="true">▲</span>
-      </div>
-      <div class="section-body" id="energy">
-        <div class="rating-row">
-          <label>Energy</label>
-          <div class="stars" id="stars-energy" role="group" aria-label="Energy rating out of 5"></div>
-        </div>
-        <div class="rating-row">
-          <label>Mood</label>
-          <div class="stars" id="stars-mood" role="group" aria-label="Mood rating out of 5"></div>
-        </div>
-        <div class="rating-row">
-          <label>Brain fog</label>
-          <div class="stars" id="stars-fog" role="group" aria-label="Brain fog rating out of 5"></div>
-        </div>
-        <div class="rating-row">
-          <label>Anxiety or dread</label>
-          <div class="stars" id="stars-anxiety" role="group" aria-label="Anxiety rating out of 5"></div>
-        </div>
-        <div class="field">
-          <label for="crash">Afternoon energy crash?</label>
-          <input type="text" id="crash" placeholder="yes/no — what time" />
-        </div>
-        <div class="field">
-          <label for="herself">Felt like herself today?</label>
-          <input type="text" id="herself" placeholder="yes / mostly / not really..." />
-        </div>
-      </div>
-    </section>
-
-    <!-- Food & Blood Sugar -->
-    <section class="section">
-      <div class="section-header" onclick="toggle('food')" role="button" aria-expanded="true" aria-controls="food">
-        <h2>Food &amp; Blood Sugar</h2>
-        <span class="section-toggle open" id="tog-food" aria-hidden="true">▲</span>
-      </div>
-      <div class="section-body" id="food">
-        <div class="field">
-          <label for="breakfast">Breakfast (time + what)</label>
-          <input type="text" id="breakfast" placeholder="e.g. 8am — eggs, sourdough" />
-        </div>
-        <div class="field">
-          <label for="lunch">Lunch (time + what, or "skipped")</label>
-          <input type="text" id="lunch" placeholder="e.g. 1pm — salad" />
-        </div>
-        <div class="field">
-          <label for="dinner">Dinner (time + what)</label>
-          <input type="text" id="dinner" placeholder="e.g. 7pm — salmon, vegetables" />
-        </div>
-        <div class="field">
-          <label for="snacks">Snacks</label>
-          <input type="text" id="snacks" placeholder="e.g. 3pm — nuts" />
-        </div>
-        <div class="row-2">
-          <div class="field">
-            <label for="caffeine">Caffeine (cups + last time)</label>
-            <input type="text" id="caffeine" placeholder="e.g. 2 cups, last 2pm" />
-          </div>
-          <div class="field">
-            <label for="water">Water (glasses)</label>
-            <input type="text" id="water" placeholder="e.g. 6" />
-          </div>
-        </div>
-        <div class="field">
-          <label for="alcohol">Alcohol</label>
-          <input type="text" id="alcohol" placeholder="yes / no / units" />
-        </div>
-      </div>
-    </section>
-
-    <!-- Cycle & Hormonal Signs -->
-    <section class="section">
-      <div class="section-header" onclick="toggle('cycle')" role="button" aria-expanded="true" aria-controls="cycle">
-        <h2>Cycle &amp; Hormonal Signs</h2>
-        <span class="section-toggle open" id="tog-cycle" aria-hidden="true">▲</span>
-      </div>
-      <div class="section-body" id="cycle">
-        <div class="field">
-          <label for="cycleday">Cycle day</label>
-          <input type="number" id="cycleday" min="1" max="35" placeholder="e.g. 14" />
-        </div>
-        <div class="field">
-          <label>Cervical mucus</label>
-          <div class="pill-grid" style="margin-top: 8px;" role="group" aria-label="Cervical mucus type">
-            <button class="pill-btn" onclick="selectPill(this, 'mucus', 'D')" data-group="mucus">D — dry</button>
-            <button class="pill-btn" onclick="selectPill(this, 'mucus', 'S')" data-group="mucus">S — sticky</button>
-            <button class="pill-btn" onclick="selectPill(this, 'mucus', 'C')" data-group="mucus">C — creamy</button>
-            <button class="pill-btn" onclick="selectPill(this, 'mucus', 'W')" data-group="mucus">W — watery</button>
-            <button class="pill-btn" onclick="selectPill(this, 'mucus', 'EW')" data-group="mucus">EW — egg-white</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>Period (if present)</label>
-          <div class="pill-grid" style="margin-top: 8px;" role="group" aria-label="Period flow">
-            <button class="pill-btn" onclick="selectPill(this, 'period', 'none')" data-group="period">None</button>
-            <button class="pill-btn" onclick="selectPill(this, 'period', 'spotting')" data-group="period">Spotting</button>
-            <button class="pill-btn" onclick="selectPill(this, 'period', 'light')" data-group="period">Light</button>
-            <button class="pill-btn" onclick="selectPill(this, 'period', 'medium')" data-group="period">Medium</button>
-            <button class="pill-btn" onclick="selectPill(this, 'period', 'heavy')" data-group="period">Heavy</button>
-          </div>
-        </div>
-        <div class="field">
-          <label for="sensations">Physical sensations</label>
-          <input type="text" id="sensations" placeholder="e.g. cramps, bloating, tenderness..." />
-        </div>
-      </div>
-    </section>
-
-    <!-- Daily Tasks -->
-    <section class="section">
-      <div class="section-header" onclick="toggle('tasks')" role="button" aria-expanded="true" aria-controls="tasks">
-        <h2>Daily Tasks</h2>
-        <span class="section-toggle open" id="tog-tasks" aria-hidden="true">▲</span>
-      </div>
-      <div class="section-body" id="tasks">
-        <div class="tasks-area" id="tasksArea"></div>
-        <button class="add-task" onclick="addTask()">+ add task</button>
-      </div>
-    </section>
-
-    <!-- Notes -->
-    <section class="section">
-      <div class="section-header" onclick="toggle('notes')" role="button" aria-expanded="true" aria-controls="notes">
-        <h2>Notes</h2>
-        <span class="section-toggle open" id="tog-notes" aria-hidden="true">▲</span>
-      </div>
-      <div class="section-body" id="notes">
-        <div class="field">
-          <textarea id="notesText" rows="5" placeholder="Anything else worth noting today..."></textarea>
-        </div>
-      </div>
-    </section>
-
-    <!-- Save Bar -->
-    <div class="save-bar">
-      <button class="btn-clear" onclick="clearAll()">Clear</button>
-      <button class="btn-save" onclick="saveEntry()">Save entry</button>
+  <!-- ══ FERTILITY TRACKING ══ -->
+  <section class="section">
+    <div class="section-header" onclick="toggle('fertility')" role="button" aria-expanded="true" aria-controls="fertility">
+      <h2>Fertility &amp; Cycle Tracking</h2>
+      <span class="section-toggle open" id="tog-fertility" aria-hidden="true">▲</span>
     </div>
+    <div class="section-body" id="fertility">
 
-    <!-- Past Entries -->
-    <section class="section" style="margin-top: 2rem;">
-      <div class="section-header" onclick="toggle('history')" role="button" aria-expanded="false" aria-controls="history">
-        <h2>Past Entries</h2>
-        <span class="section-toggle" id="tog-history" aria-hidden="true">▼</span>
+      <!-- Period log -->
+      <div class="subsection-label">Period dates</div>
+      <div class="period-log-row">
+        <div class="field" style="flex:1">
+          <label for="periodStart">Period start date</label>
+          <input type="date" id="periodStart" />
+        </div>
+        <div class="field" style="flex:1">
+          <label for="periodEnd">Period end date</label>
+          <input type="date" id="periodEnd" />
+        </div>
+        <button class="btn-log-period" onclick="logPeriod()">Log period</button>
       </div>
-      <div class="section-body hidden" id="history">
-        <div id="historyList" class="history-list"></div>
-        <p class="history-empty" id="historyEmpty">No saved entries yet.</p>
+
+      <!-- Period history mini list -->
+      <div id="periodHistory" class="period-history"></div>
+
+      <!-- Predicted window -->
+      <div class="prediction-card" id="predictionCard" style="display:none">
+        <div class="pred-row" id="predCycleLen"></div>
+        <div class="pred-row" id="predNextPeriod"></div>
+        <div class="pred-row fertile" id="predFertileWindow"></div>
+        <div class="pred-row ovulation" id="predOvulation"></div>
       </div>
-    </section>
 
-  </div><!-- /app -->
+      <!-- BBT -->
+      <div class="subsection-label" style="margin-top:14px">Basal body temperature (BBT)</div>
+      <div class="row-2">
+        <div class="field">
+          <label for="bbt">BBT (°C or °F)</label>
+          <input type="text" id="bbt" placeholder="e.g. 36.4" />
+        </div>
+        <div class="field">
+          <label for="bbtTime">Taken at</label>
+          <input type="time" id="bbtTime" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="bbtNotes">BBT notes</label>
+        <input type="text" id="bbtNotes" placeholder="e.g. taken before getting up, slight rise today" />
+      </div>
 
-  <script src="app.js"></script>
+      <!-- LH / OPK -->
+      <div class="subsection-label" style="margin-top:14px">LH surge / OPK test</div>
+      <div class="field">
+        <label>OPK result today</label>
+        <div class="pill-grid" style="margin-top:8px" role="group" aria-label="OPK result">
+          <button class="pill-btn" onclick="selectPill(this,'opk','negative')"    data-group="opk">Negative</button>
+          <button class="pill-btn" onclick="selectPill(this,'opk','low')"         data-group="opk">Low</button>
+          <button class="pill-btn" onclick="selectPill(this,'opk','high')"        data-group="opk">High</button>
+          <button class="pill-btn" onclick="selectPill(this,'opk','peak')"        data-group="opk">Peak ✦</button>
+          <button class="pill-btn" onclick="selectPill(this,'opk','not-tested')"  data-group="opk">Not tested</button>
+        </div>
+      </div>
+
+      <!-- Cervical mucus (moved here, more relevant) -->
+      <div class="subsection-label" style="margin-top:14px">Cervical mucus</div>
+      <div class="field">
+        <div class="pill-grid" role="group" aria-label="Cervical mucus type">
+          <button class="pill-btn" onclick="selectPill(this,'mucus','D')"  data-group="mucus">D — dry</button>
+          <button class="pill-btn" onclick="selectPill(this,'mucus','S')"  data-group="mucus">S — sticky</button>
+          <button class="pill-btn" onclick="selectPill(this,'mucus','C')"  data-group="mucus">C — creamy</button>
+          <button class="pill-btn" onclick="selectPill(this,'mucus','W')"  data-group="mucus">W — watery</button>
+          <button class="pill-btn" onclick="selectPill(this,'mucus','EW')" data-group="mucus">EW — egg-white</button>
+        </div>
+      </div>
+
+      <!-- Intimacy -->
+      <div class="subsection-label" style="margin-top:14px">Intimacy</div>
+      <div class="field">
+        <label>Intercourse today</label>
+        <div class="pill-grid" style="margin-top:8px" role="group" aria-label="Intimacy">
+          <button class="pill-btn" onclick="selectPill(this,'intimacy','yes')"             data-group="intimacy">Yes</button>
+          <button class="pill-btn" onclick="selectPill(this,'intimacy','no')"              data-group="intimacy">No</button>
+          <button class="pill-btn" onclick="selectPill(this,'intimacy','protected')"       data-group="intimacy">Protected</button>
+        </div>
+      </div>
+
+      <!-- Fertility optimisation checklist -->
+      <div class="subsection-label" style="margin-top:16px">Fertility optimisation — today's checklist</div>
+      <div class="fertility-checklist" id="fertilityChecklist"></div>
+
+      <!-- Supplements -->
+      <div class="field" style="margin-top:10px">
+        <label for="supplements">Supplements taken today</label>
+        <input type="text" id="supplements" placeholder="e.g. Folate 400mcg, CoQ10, Vit D, Omega-3" />
+      </div>
+
+      <!-- Stress -->
+      <div class="subsection-label" style="margin-top:14px">Stress &amp; lifestyle</div>
+      <div class="rating-row">
+        <label>Stress level</label>
+        <div class="stars" id="stars-stress" role="group" aria-label="Stress level out of 5"></div>
+      </div>
+      <div class="row-2" style="margin-top:8px">
+        <div class="field">
+          <label for="exercise">Exercise today</label>
+          <input type="text" id="exercise" placeholder="e.g. 30 min walk, yoga" />
+        </div>
+        <div class="field">
+          <label for="exerciseIntensity">Intensity</label>
+          <div class="pill-grid" style="margin-top:8px" role="group">
+            <button class="pill-btn sm" onclick="selectPill(this,'intensity','light')"    data-group="intensity">Light</button>
+            <button class="pill-btn sm" onclick="selectPill(this,'intensity','moderate')" data-group="intensity">Moderate</button>
+            <button class="pill-btn sm" onclick="selectPill(this,'intensity','intense')"  data-group="intensity">Intense</button>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="fertilityNotes">Fertility notes</label>
+        <textarea id="fertilityNotes" rows="3" placeholder="Any observations, symptoms, or thoughts relevant to your fertility journey..."></textarea>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Sleep -->
+  <section class="section">
+    <div class="section-header" onclick="toggle('sleep')" role="button" aria-expanded="true" aria-controls="sleep">
+      <h2>Sleep</h2>
+      <span class="section-toggle open" id="tog-sleep" aria-hidden="true">▲</span>
+    </div>
+    <div class="section-body" id="sleep">
+      <div class="row-2">
+        <div class="field"><label for="bedtime">Bedtime</label><input type="time" id="bedtime" /></div>
+        <div class="field"><label for="waketime">Wake time</label><input type="time" id="waketime" /></div>
+      </div>
+      <div class="field"><label for="totalhours">Total hours</label><input type="text" id="totalhours" placeholder="e.g. 7.5" /></div>
+      <div class="field"><label for="nightwakings">Night wakings (time + reason)</label><input type="text" id="nightwakings" placeholder="e.g. 2am — thirsty" /></div>
+      <div class="field"><label for="wakefeeling">How do you feel waking up?</label><input type="text" id="wakefeeling" placeholder="e.g. groggy, refreshed..." /></div>
+    </div>
+  </section>
+
+  <!-- Energy & Mood -->
+  <section class="section">
+    <div class="section-header" onclick="toggle('energy')" role="button" aria-expanded="true" aria-controls="energy">
+      <h2>Energy &amp; Mood</h2>
+      <span class="section-toggle open" id="tog-energy" aria-hidden="true">▲</span>
+    </div>
+    <div class="section-body" id="energy">
+      <div class="rating-row"><label>Energy</label><div class="stars" id="stars-energy" role="group" aria-label="Energy rating out of 5"></div></div>
+      <div class="rating-row"><label>Mood</label><div class="stars" id="stars-mood" role="group" aria-label="Mood rating out of 5"></div></div>
+      <div class="rating-row"><label>Brain fog</label><div class="stars" id="stars-fog" role="group" aria-label="Brain fog rating out of 5"></div></div>
+      <div class="rating-row"><label>Anxiety or dread</label><div class="stars" id="stars-anxiety" role="group" aria-label="Anxiety rating out of 5"></div></div>
+      <div class="field"><label for="crash">Afternoon energy crash?</label><input type="text" id="crash" placeholder="yes/no — what time" /></div>
+      <div class="field"><label for="herself">Felt like herself today?</label><input type="text" id="herself" placeholder="yes / mostly / not really..." /></div>
+    </div>
+  </section>
+
+  <!-- Food & Blood Sugar -->
+  <section class="section">
+    <div class="section-header" onclick="toggle('food')" role="button" aria-expanded="true" aria-controls="food">
+      <h2>Food &amp; Blood Sugar</h2>
+      <span class="section-toggle open" id="tog-food" aria-hidden="true">▲</span>
+    </div>
+    <div class="section-body" id="food">
+      <div class="field"><label for="breakfast">Breakfast (time + what)</label><input type="text" id="breakfast" placeholder="e.g. 8am — eggs, sourdough" /></div>
+      <div class="field"><label for="lunch">Lunch</label><input type="text" id="lunch" placeholder="e.g. 1pm — salad" /></div>
+      <div class="field"><label for="dinner">Dinner</label><input type="text" id="dinner" placeholder="e.g. 7pm — salmon, vegetables" /></div>
+      <div class="field"><label for="snacks">Snacks</label><input type="text" id="snacks" placeholder="e.g. 3pm — nuts" /></div>
+      <div class="row-2">
+        <div class="field"><label for="caffeine">Caffeine</label><input type="text" id="caffeine" placeholder="e.g. 2 cups, last 2pm" /></div>
+        <div class="field"><label for="water">Water (glasses)</label><input type="text" id="water" placeholder="e.g. 6" /></div>
+      </div>
+      <div class="field"><label for="alcohol">Alcohol</label><input type="text" id="alcohol" placeholder="yes / no / units" /></div>
+    </div>
+  </section>
+
+  <!-- Cycle & Hormonal Signs -->
+  <section class="section">
+    <div class="section-header" onclick="toggle('cycle')" role="button" aria-expanded="true" aria-controls="cycle">
+      <h2>Other Hormonal Signs</h2>
+      <span class="section-toggle open" id="tog-cycle" aria-hidden="true">▲</span>
+    </div>
+    <div class="section-body" id="cycle">
+      <div class="field"><label for="cycleday">Cycle day (auto-calculated or enter manually)</label><input type="number" id="cycleday" min="1" max="40" placeholder="e.g. 14" /></div>
+      <div class="field">
+        <label>Period flow (if present)</label>
+        <div class="pill-grid" style="margin-top:8px" role="group" aria-label="Period flow">
+          <button class="pill-btn" onclick="selectPill(this,'period','none')"     data-group="period">None</button>
+          <button class="pill-btn" onclick="selectPill(this,'period','spotting')" data-group="period">Spotting</button>
+          <button class="pill-btn" onclick="selectPill(this,'period','light')"    data-group="period">Light</button>
+          <button class="pill-btn" onclick="selectPill(this,'period','medium')"   data-group="period">Medium</button>
+          <button class="pill-btn" onclick="selectPill(this,'period','heavy')"    data-group="period">Heavy</button>
+        </div>
+      </div>
+      <div class="field"><label for="sensations">Physical sensations</label><input type="text" id="sensations" placeholder="e.g. cramps, bloating, tenderness..." /></div>
+      <div class="field"><label for="skinHair">Skin &amp; hair changes</label><input type="text" id="skinHair" placeholder="e.g. clear skin, oily roots, acne on chin..." /></div>
+      <div class="field"><label for="libido">Libido</label>
+        <div class="pill-grid" style="margin-top:8px" role="group">
+          <button class="pill-btn sm" onclick="selectPill(this,'libido','low')"    data-group="libido">Low</button>
+          <button class="pill-btn sm" onclick="selectPill(this,'libido','medium')" data-group="libido">Medium</button>
+          <button class="pill-btn sm" onclick="selectPill(this,'libido','high')"   data-group="libido">High</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Daily Tasks -->
+  <section class="section">
+    <div class="section-header" onclick="toggle('tasks')" role="button" aria-expanded="true" aria-controls="tasks">
+      <h2>Daily Tasks</h2>
+      <span class="section-toggle open" id="tog-tasks" aria-hidden="true">▲</span>
+    </div>
+    <div class="section-body" id="tasks">
+      <div class="tasks-area" id="tasksArea"></div>
+      <button class="add-task" onclick="addTask()">+ add task</button>
+    </div>
+  </section>
+
+  <!-- Notes -->
+  <section class="section">
+    <div class="section-header" onclick="toggle('notes')" role="button" aria-expanded="true" aria-controls="notes">
+      <h2>Notes</h2>
+      <span class="section-toggle open" id="tog-notes" aria-hidden="true">▲</span>
+    </div>
+    <div class="section-body" id="notes">
+      <div class="field"><textarea id="notesText" rows="5" placeholder="Anything else worth noting today..."></textarea></div>
+    </div>
+  </section>
+
+  <!-- Save Bar -->
+  <div class="save-bar">
+    <button class="btn-clear" onclick="clearAll()">Clear</button>
+    <button class="btn-save" onclick="saveEntry()">Save entry</button>
+  </div>
+
+  <!-- Past Entries -->
+  <section class="section" style="margin-top:2rem">
+    <div class="section-header" onclick="toggle('history')" role="button" aria-expanded="false" aria-controls="history">
+      <h2>Past Entries</h2>
+      <span class="section-toggle" id="tog-history" aria-hidden="true">▼</span>
+    </div>
+    <div class="section-body hidden" id="history">
+      <div id="historyList" class="history-list"></div>
+      <p class="history-empty" id="historyEmpty">No saved entries yet.</p>
+    </div>
+  </section>
+
+</div><!-- /app -->
+<script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hormone Phase Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Page-level nav ── */
+    .phase-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 1.5rem 0 0.5rem;
+      flex-wrap: wrap;
+    }
+    .phase-nav-btn {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 0.5px solid var(--border);
+      background: none;
+      color: var(--muted);
+      padding: 7px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phase-nav-btn:hover { border-color: var(--sand); color: var(--sand); }
+    .phase-nav-btn.active { background: var(--sand); color: #fff; border-color: var(--sand); }
+
+    /* ── Phase page ── */
+    .phase-page { display: none; padding-bottom: 4rem; }
+    .phase-page.visible { display: block; }
+
+    /* ── Overview title ── */
+    .overview-title {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 400;
+      color: var(--sand-dark);
+      letter-spacing: 0.08em;
+      margin: 1.5rem 0 0.25rem;
+    }
+    .overview-subtitle {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── Overview grid (2×2) ── */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 0.5px solid var(--sand-light);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .og-cell {
+      border: 0.5px solid var(--sand-light);
+      padding: 1.1rem 1.2rem 1.25rem;
+    }
+    .og-cell-header {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--sand-dark);
+      margin-bottom: 0.1rem;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .og-cell-days {
+      font-family: 'Jost', sans-serif;
+      font-size: 10px;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    .og-theme {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text);
+      margin: 0.5rem 0 0.75rem;
+      letter-spacing: 0.02em;
+    }
+    .og-block-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin: 0.75rem 0 0.35rem;
+    }
+    .og-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .og-list li {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.5;
+      padding-left: 12px;
+      position: relative;
+    }
+    .og-list li::before {
+      content: '·';
+      position: absolute;
+      left: 0;
+      color: var(--sand);
+      font-size: 16px;
+      line-height: 1.1;
+    }
+    .og-avoid {
+      font-size: 11px;
+      color: #b07a6a;
+      font-style: italic;
+      margin-top: 0.625rem;
+      line-height: 1.5;
+    }
+    .og-inline-label {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    /* ── TCM accent box ── */
+    .tcm-box {
+      background: var(--sand-pale);
+      border-left: 2px solid var(--sand);
+      border-radius: 0 6px 6px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .tcm-box strong {
+      font-weight: 400;
+      color: var(--sand-dark);
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    /* ── Fertility focus banner ── */
+    .fertility-banner {
+      background: #fdf6ee;
+      border: 0.5px solid #e8d0b0;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .fertility-banner-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      color: var(--sand-dark);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .fertility-banner ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .fertility-banner li {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.5;
+      padding-left: 14px;
+      position: relative;
+    }
+    .fertility-banner li::before {
+      content: '✦';
+      position: absolute;
+      left: 0;
+      color: var(--sand);
+      font-size: 8px;
+      top: 4px;
+    }
+
+    /* ── Reflection page ── */
+    .reflection-title {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 4vw, 26px);
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: 0.1em;
+      margin: 2rem 0 0.25rem;
+    }
+    .reflection-divider {
+      width: 40px;
+      height: 0.5px;
+      background: var(--sand);
+      margin: 0.5rem auto 1.25rem;
+    }
+    .reflection-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 0.5px solid var(--sand-light);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .rg-cell {
+      border: 0.5px solid var(--sand-light);
+      padding: 1.1rem 1.2rem;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .rg-cell-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--sand-dark);
+      margin-bottom: 4px;
+    }
+    .rg-cell-prompt {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .rg-textarea {
+      flex: 1;
+      background: none;
+      border: none;
+      border-bottom: 0.5px solid var(--border);
+      font-family: 'Jost', sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text);
+      resize: none;
+      outline: none;
+      line-height: 1.8;
+      min-height: 80px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+    .rg-textarea:focus { border-bottom-color: var(--sand); }
+
+    /* decorative blobs */
+    .rg-blob {
+      position: absolute;
+      bottom: -10px;
+      right: -10px;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    /* ── Back to tracker link ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 0.5px solid var(--border);
+      padding: 7px 16px;
+      border-radius: 20px;
+      transition: all 0.2s;
+      margin-bottom: 0.5rem;
+    }
+    .back-link:hover { border-color: var(--sand); color: var(--sand); }
+
+    .save-reflections {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 0.5px solid var(--border);
+    }
+
+    @media (max-width: 520px) {
+      .overview-grid, .reflection-grid { grid-template-columns: 1fr; }
+      .og-cell-header { flex-direction: column; gap: 2px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="toast" id="toast">Reflections saved ✓</div>
+
+  <header class="header">
+    <div class="arch-decoration" aria-hidden="true">
+      <svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" width="120" height="60">
+        <path d="M10,60 Q10,10 60,10 Q110,10 110,60" fill="none" stroke="#c9a96e" stroke-width="0.8" opacity="0.6"/>
+        <path d="M20,60 Q20,18 60,18 Q100,18 100,60" fill="none" stroke="#c9a96e" stroke-width="0.7" opacity="0.5"/>
+        <path d="M30,60 Q30,26 60,26 Q90,26 90,60" fill="none" stroke="#c9a96e" stroke-width="0.6" opacity="0.4"/>
+      </svg>
+    </div>
+    <h1>Hormone Phase Guide</h1>
+    <p style="font-size:12px;color:var(--muted);margin-top:0.5rem;letter-spacing:0.04em;font-style:italic">Root-cause wellness for your whole self</p>
+  </header>
+
+  <div style="text-align:center;margin-top:0.75rem">
+    <a href="index.html" class="back-link">← Daily tracker</a>
+  </div>
+
+  <!-- Phase navigation -->
+  <nav class="phase-nav" aria-label="Phase selector">
+    <button class="phase-nav-btn active" onclick="showPhase('menstrual')">🌑 Menstrual</button>
+    <button class="phase-nav-btn"        onclick="showPhase('follicular')">🌒 Follicular</button>
+    <button class="phase-nav-btn"        onclick="showPhase('ovulation')">🌕 Ovulation</button>
+    <button class="phase-nav-btn"        onclick="showPhase('luteal')">🌗 Luteal</button>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       MENSTRUAL PHASE
+  ══════════════════════════════════════ -->
+  <div class="phase-page visible" id="page-menstrual">
+
+    <div class="overview-title">Menstrual Phase</div>
+    <div class="overview-subtitle">Days 1–7 · Release · Intuition · Renewal</div>
+
+    <div class="tcm-box">
+      <strong>TCM &amp; Root-Cause Lens</strong>
+      In TCM this phase is governed by the <em>Chong Mai</em> (Penetrating Vessel) and the downward movement of Blood. Healthy menstruation requires free-flowing Liver Qi, sufficient Kidney Jing, and abundant Blood. For those on a conception journey, a difficult or incomplete bleed often signals Blood deficiency, Liver Qi stagnation, or Cold in the uterus — all addressable through food, herbs, acupuncture, and lifestyle.
+    </div>
+
+    <div class="overview-grid">
+      <!-- Cell 1: Phase overview -->
+      <div class="og-cell">
+        <div class="og-cell-header">Menstrual Phase <span class="og-cell-days">Days 1–7</span></div>
+        <div class="og-theme">Theme: Release · Intuition · Renewal</div>
+        <div class="og-block-label">Brain state</div>
+        <p style="font-size:12px;font-weight:300;color:var(--text);line-height:1.6;margin-bottom:0.5rem">Inward, reflective, pattern-seeing, deep</p>
+        <div class="og-block-label">Energy</div>
+        <p style="font-size:12px;font-weight:300;color:var(--text);line-height:1.6;margin-bottom:0.5rem">Lowest physical, highest intuitive. Nervous system craves safety + quiet.</p>
+        <div class="og-block-label">Best cognitive strengths</div>
+        <ul class="og-list">
+          <li>Pattern recognition</li>
+          <li>Truth-telling &amp; evaluation</li>
+          <li>Emotional clarity</li>
+          <li>Root-cause insight</li>
+        </ul>
+        <div class="og-block-label">What happens in the body</div>
+        <ul class="og-list">
+          <li>Estrogen &amp; progesterone at lowest</li>
+          <li>Uterine lining sheds</li>
+          <li>Inflammatory mediators rise temporarily</li>
+          <li>Nervous system more sensitive</li>
+          <li>Kidney Qi turns inward (TCM)</li>
+        </ul>
+      </div>
+
+      <!-- Cell 2: Food & herbs -->
+      <div class="og-cell">
+        <div class="og-cell-header">Supportive Foods &amp; Herbs</div>
+        <div class="og-block-label">Nourishing foods</div>
+        <ul class="og-list">
+          <li>Iron-rich: red meat, lentils, spinach, nettles</li>
+          <li>Mineral broths &amp; bone broth</li>
+          <li>Warm cooked meals — avoid raw &amp; cold</li>
+          <li>Root vegetables (kidney support)</li>
+          <li>Dark chocolate (magnesium)</li>
+          <li>Vitamin C foods (enhance iron absorption)</li>
+          <li>Omega-3s: sardines, walnuts, flaxseed</li>
+          <li>Beets &amp; dark leafy greens (Blood building)</li>
+        </ul>
+        <div class="og-block-label">TCM / naturopathic herbs</div>
+        <ul class="og-list">
+          <li>Ginger — cramp, circulation &amp; Cold in uterus</li>
+          <li>Turmeric — anti-inflammatory, Liver Qi</li>
+          <li>Nettle — mineral &amp; Blood support</li>
+          <li>Raspberry leaf — uterine tone &amp; support</li>
+          <li>Dong Quai — Blood nourishing (post-bleed)</li>
+          <li>Cinnamon — circulation, warmth, blood sugar</li>
+        </ul>
+        <div class="og-block-label">Supplements to consider</div>
+        <ul class="og-list">
+          <li>Iron (if deficient) + Vit C</li>
+          <li>Magnesium glycinate (cramps, sleep)</li>
+          <li>Folate / methylfolate (always for TTC)</li>
+          <li>Omega-3 EPA/DHA</li>
+        </ul>
+      </div>
+
+      <!-- Cell 3: Work + home -->
+      <div class="og-cell">
+        <div class="og-cell-header">Best Work Focus</div>
+        <ul class="og-list">
+          <li>Review what worked / didn't</li>
+          <li>Audit projects + systems</li>
+          <li>Financial &amp; outcome review</li>
+          <li>Client pattern analysis</li>
+          <li>Strategy reflection</li>
+          <li>Simplify workflows + identify friction</li>
+          <li>Write insight notes, update SOPs quietly</li>
+        </ul>
+        <p class="og-avoid">Avoid: launches, high-stakes calls, heavy output days, big meetings</p>
+        <div class="og-block-label" style="margin-top:1rem">Home &amp; relationship</div>
+        <ul class="og-list">
+          <li>Simplify spaces, reduce noise &amp; clutter</li>
+          <li>Deep, honest conversations</li>
+          <li>Slow, present parenting</li>
+          <li>Communicate needs to partner openly</li>
+          <li>Rest without guilt — this is biological</li>
+        </ul>
+      </div>
+
+      <!-- Cell 4: Creative + movement -->
+      <div class="og-cell">
+        <div class="og-cell-header">Creative</div>
+        <ul class="og-list">
+          <li>Journaling &amp; idea downloading</li>
+          <li>Vision mapping &amp; theme finding</li>
+          <li>Story mining &amp; mind maps</li>
+          <li>Voice note idea capture</li>
+        </ul>
+        <div class="og-block-label" style="margin-top:1rem">Movement</div>
+        <ul class="og-list">
+          <li>Gentle yoga &amp; yin</li>
+          <li>Walking in nature</li>
+          <li>Stretching &amp; breathwork</li>
+          <li>Mobility work</li>
+          <li>Avoid HIIT, heavy lifting, intense cardio</li>
+        </ul>
+        <div class="og-block-label" style="margin-top:1rem">Acupuncture &amp; bodywork</div>
+        <ul class="og-list">
+          <li>Ideal time for acupuncture (uterine support)</li>
+          <li>Castor oil packs (days 1–5, not on heavy days)</li>
+          <li>Womb massage (arvigo / maya)</li>
+          <li>Warm foot soaks with ginger</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Fertility focus -->
+    <div class="fertility-banner">
+      <div class="fertility-banner-title">✦ Fertility lens — what this phase tells you</div>
+      <ul>
+        <li>Flow quality matters: bright red, no clots, 3–5 days is optimal. Brown, clotted, scanty or very painful bleeds signal Blood stagnation or deficiency — key root causes in subfertility.</li>
+        <li>Severe cramping (dysmenorrhoea) often indicates endometriosis, adenomyosis or Cold in the uterus — worth investigating functionally.</li>
+        <li>Short bleed (&lt;3 days) or very light flow may indicate thin uterine lining — the "soil" that the embryo implants into.</li>
+        <li>This is your body clearing and preparing. Rest here deeply. The quality of this phase sets the foundation for the whole cycle.</li>
+        <li>Consider: full thyroid panel (TSH, FT3, FT4, TPO antibodies), iron studies, ferritin, CBC at this time of cycle.</li>
+      </ul>
+    </div>
+
+    <!-- Reflection journal -->
+    <div class="reflection-title">Menstrual Phase — My Reflections</div>
+    <div class="reflection-divider"></div>
+    <div class="reflection-grid">
+      <div class="rg-cell">
+        <div class="rg-cell-title">Days 1–7</div>
+        <div class="rg-cell-prompt">What I feel:</div>
+        <textarea class="rg-textarea" id="ref-menstrual-feel" placeholder="How does your body feel this phase? Any patterns you notice?"></textarea>
+        <svg class="rg-blob" width="130" height="140" viewBox="0 0 130 140">
+          <ellipse cx="65" cy="75" rx="58" ry="65" fill="#e8e0d4"/>
+        </svg>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Supportive Foods &amp; Herbs</div>
+        <div class="rg-cell-prompt">What I crave &amp; what helps:</div>
+        <textarea class="rg-textarea" id="ref-menstrual-food" placeholder="What foods, teas or herbs feel nourishing right now?"></textarea>
+        <svg class="rg-blob" width="120" height="130" viewBox="0 0 120 130">
+          <path d="M60,10 Q110,20 110,65 Q110,120 60,120 Q10,120 10,65 Q10,20 60,10Z" fill="#f2d4c8"/>
+        </svg>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Best Work Focus</div>
+        <div class="rg-cell-prompt">What I enjoy &amp; what flows:</div>
+        <textarea class="rg-textarea" id="ref-menstrual-work" placeholder="What kind of work or tasks feel natural this phase?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Creative</div>
+        <div class="rg-cell-prompt">What fills me up:</div>
+        <textarea class="rg-textarea" id="ref-menstrual-creative" placeholder="What creative expression calls to you?"></textarea>
+        <svg class="rg-blob" width="110" height="110" viewBox="0 0 110 110">
+          <ellipse cx="55" cy="60" rx="50" ry="48" fill="#e8e0d4"/>
+        </svg>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Home &amp; Relationship</div>
+        <div class="rg-cell-prompt">What I need:</div>
+        <textarea class="rg-textarea" id="ref-menstrual-home" placeholder="What do you need from your home and relationships this phase?"></textarea>
+        <svg class="rg-blob" width="140" height="150" viewBox="0 0 140 150">
+          <rect x="10" y="10" width="120" height="130" rx="40" fill="#d4b896"/>
+        </svg>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Movement</div>
+        <div class="rg-cell-prompt">What my body asks for:</div>
+        <textarea class="rg-textarea" id="ref-menstrual-move" placeholder="What movement feels supportive, not depleting?"></textarea>
+        <svg class="rg-blob" width="120" height="120" viewBox="0 0 120 120">
+          <ellipse cx="65" cy="65" rx="52" ry="52" fill="#e8e4dc"/>
+        </svg>
+      </div>
+      <div class="rg-cell" style="grid-column:1/-1">
+        <div class="rg-cell-title">Fertility observations this phase</div>
+        <div class="rg-cell-prompt">Flow quality, pain level, signs &amp; what I'm noticing on my conception journey:</div>
+        <textarea class="rg-textarea" id="ref-menstrual-fertility" rows="4" placeholder="e.g. Flow colour, any clots, pain, how I felt emotionally, what I want to discuss with my practitioner..."></textarea>
+      </div>
+    </div>
+    <div class="save-reflections">
+      <button class="btn-save" onclick="saveReflections('menstrual')">Save reflections</button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       FOLLICULAR PHASE
+  ══════════════════════════════════════ -->
+  <div class="phase-page" id="page-follicular">
+
+    <div class="overview-title">Follicular Phase</div>
+    <div class="overview-subtitle">Days 6–14 · Emergence · Possibility · Growth</div>
+
+    <div class="tcm-box">
+      <strong>TCM &amp; Root-Cause Lens</strong>
+      Post-bleed, the body begins rebuilding. In TCM this is the <em>Yin phase</em> — Kidney Yin and Blood are nourished, the uterine lining thickens, and Essence (Jing) rises. Functionally, estrogen rises and FSH stimulates follicle development. For conception, the quality of this phase directly determines egg quality and endometrial receptivity. Nourishing Yin deeply here is one of the most powerful things a woman on a fertility journey can do.
+    </div>
+
+    <div class="overview-grid">
+      <div class="og-cell">
+        <div class="og-cell-header">Follicular Phase <span class="og-cell-days">Days 6–14</span></div>
+        <div class="og-theme">Theme: Emergence · Possibility · New beginnings</div>
+        <div class="og-block-label">Brain state</div>
+        <p style="font-size:12px;font-weight:300;color:var(--text);line-height:1.6;margin-bottom:0.5rem">Curious, open, optimistic, externally focused. Dopamine rising.</p>
+        <div class="og-block-label">Energy</div>
+        <p style="font-size:12px;font-weight:300;color:var(--text);line-height:1.6;margin-bottom:0.5rem">Building steadily. Stamina increases. Feels lighter and more social.</p>
+        <div class="og-block-label">Best cognitive strengths</div>
+        <ul class="og-list">
+          <li>Learning &amp; absorbing new information</li>
+          <li>Starting new projects</li>
+          <li>Creative ideation</li>
+          <li>Risk-taking &amp; exploration</li>
+        </ul>
+        <div class="og-block-label">What happens in the body</div>
+        <ul class="og-list">
+          <li>FSH stimulates follicle development</li>
+          <li>Estrogen rises — lining rebuilds</li>
+          <li>Cervical mucus becomes more fluid</li>
+          <li>Body temperature lower (Yin phase)</li>
+          <li>Kidney Yin &amp; Blood are nourished (TCM)</li>
+        </ul>
+      </div>
+      <div class="og-cell">
+        <div class="og-cell-header">Supportive Foods &amp; Herbs</div>
+        <div class="og-block-label">Nourishing foods</div>
+        <ul class="og-list">
+          <li>Sprouted seeds: flax, pumpkin (seed cycling)</li>
+          <li>Fermented foods: kimchi, sauerkraut, kefir</li>
+          <li>Light proteins: eggs, fish, legumes</li>
+          <li>Colourful vegetables &amp; cruciferous greens</li>
+          <li>Berries (antioxidants for egg quality)</li>
+          <li>Avocado &amp; olive oil (hormone precursors)</li>
+          <li>Dark leafy greens (folate, Blood building)</li>
+          <li>Soaked nuts &amp; seeds</li>
+        </ul>
+        <div class="og-block-label">TCM / naturopathic herbs</div>
+        <ul class="og-list">
+          <li>Shatavari — Yin tonic, endometrial support</li>
+          <li>He Shou Wu (Fo-Ti) — Blood &amp; Jing nourishing</li>
+          <li>Maca root — hormonal adaptogen, egg quality</li>
+          <li>Royal jelly — follicle &amp; egg quality support</li>
+          <li>Schisandra — Liver, Kidney, antioxidant</li>
+          <li>Peony root (Bai Shao) — Blood nourishing</li>
+        </ul>
+        <div class="og-block-label">Supplements to consider</div>
+        <ul class="og-list">
+          <li>CoQ10 / Ubiquinol (egg quality, mitochondria)</li>
+          <li>Vitamin D3 + K2 (follicle development)</li>
+          <li>Inositol (PCOS, insulin sensitivity)</li>
+          <li>Zinc (folliculogenesis)</li>
+        </ul>
+      </div>
+      <div class="og-cell">
+        <div class="og-cell-header">Best Work Focus</div>
+        <ul class="og-list">
+          <li>Begin new projects &amp; initiatives</li>
+          <li>Research, learning &amp; planning</li>
+          <li>Pitching, networking, first meetings</li>
+          <li>Content creation &amp; writing</li>
+          <li>Skill building &amp; training</li>
+          <li>Setting intentions &amp; goals</li>
+        </ul>
+        <div class="og-block-label" style="margin-top:1rem">Home &amp; relationship</div>
+        <ul class="og-list">
+          <li>Spring-clean &amp; refresh spaces</li>
+          <li>Plan dates, social connection</li>
+          <li>Communicate hopes with partner</li>
+          <li>Try new activities together</li>
+          <li>Reconnect with pleasure &amp; playfulness</li>
+        </ul>
+      </div>
+      <div class="og-cell">
+        <div class="og-cell-header">Creative &amp; Movement</div>
+        <div class="og-block-label">Creative</div>
+        <ul class="og-list">
+          <li>Brainstorming &amp; vision boarding</li>
+          <li>Writing, art, music</li>
+          <li>Learning a new skill or craft</li>
+          <li>Photography &amp; expression</li>
+        </ul>
+        <div class="og-block-label" style="margin-top:1rem">Movement</div>
+        <ul class="og-list">
+          <li>Pilates &amp; dance</li>
+          <li>Running &amp; cycling (building intensity)</li>
+          <li>Swimming</li>
+          <li>Strength training begins well here</li>
+          <li>Avoid over-exercising — cortisol disrupts estrogen</li>
+        </ul>
+        <div class="og-block-label" style="margin-top:1rem">Acupuncture &amp; bodywork</div>
+        <ul class="og-list">
+          <li>Acupuncture: follicle stimulation, Yin nourishing</li>
+          <li>Abdominal massage to increase uterine blood flow</li>
+          <li>Castor oil packs (days 6–12 if no active bleed)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fertility-banner">
+      <div class="fertility-banner-title">✦ Fertility lens — your most important phase for egg quality</div>
+      <ul>
+        <li>Follicle development begins ~90 days before ovulation — what you do now (and over 3 months) directly influences egg quality. This is not a quick fix; it is deep nourishment.</li>
+        <li>Estrogen dominance signs (heavy periods, breast tenderness, bloating) often indicate Liver Qi stagnation and impaired estrogen metabolism — support with cruciferous veg, DIM, and liver herbs.</li>
+        <li>Thin uterine lining (&lt;7mm): focus on Kidney Yin foods, acupuncture, and avoid over-exercising which directs blood away from the uterus.</li>
+        <li>PCOS pattern (follicles not maturing): seed cycling, inositol, low-GI diet, and addressing insulin resistance are key root causes.</li>
+        <li>Consider: Day 3 bloods (FSH, LH, estradiol, AMH) — best taken in early follicular phase.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-title">Follicular Phase — My Reflections</div>
+    <div class="reflection-divider"></div>
+    <div class="reflection-grid">
+      <div class="rg-cell">
+        <div class="rg-cell-title">Days 6–14</div>
+        <div class="rg-cell-prompt">What I feel:</div>
+        <textarea class="rg-textarea" id="ref-follicular-feel" placeholder="How does your energy shift as you emerge from menstruation?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Supportive Foods &amp; Herbs</div>
+        <div class="rg-cell-prompt">What I crave &amp; what helps:</div>
+        <textarea class="rg-textarea" id="ref-follicular-food" placeholder="What feels nourishing and light right now?"></textarea>
+        <svg class="rg-blob" width="120" height="120" viewBox="0 0 120 120">
+          <ellipse cx="60" cy="65" rx="52" ry="48" fill="#e8f0e4"/>
+        </svg>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Best Work Focus</div>
+        <div class="rg-cell-prompt">What I enjoy &amp; what flows:</div>
+        <textarea class="rg-textarea" id="ref-follicular-work" placeholder="What projects or tasks are you energised to begin?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Creative</div>
+        <div class="rg-cell-prompt">What fills me up:</div>
+        <textarea class="rg-textarea" id="ref-follicular-creative" placeholder="What creative sparks are arriving?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Home &amp; Relationship</div>
+        <div class="rg-cell-prompt">What I need:</div>
+        <textarea class="rg-textarea" id="ref-follicular-home" placeholder="How do you want to connect with your partner and home?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Movement</div>
+        <div class="rg-cell-prompt">What my body asks for:</div>
+        <textarea class="rg-textarea" id="ref-follicular-move" placeholder="What movement feels energising and joyful?"></textarea>
+      </div>
+      <div class="rg-cell" style="grid-column:1/-1">
+        <div class="rg-cell-title">Fertility observations this phase</div>
+        <div class="rg-cell-prompt">Mucus changes, OPK readings, BBT, energy, libido, what I'm noticing:</div>
+        <textarea class="rg-textarea" id="ref-follicular-fertility" rows="4" placeholder="e.g. Mucus becoming more watery, energy returning, what I want to discuss with my practitioner..."></textarea>
+      </div>
+    </div>
+    <div class="save-reflections">
+      <button class="btn-save" onclick="saveReflections('follicular')">Save reflections</button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       OVULATION PHASE
+  ══════════════════════════════════════ -->
+  <div class="phase-page" id="page-ovulation">
+
+    <div class="overview-title">Ovulation Phase</div>
+    <div class="overview-subtitle">Days 14–16 · Peak · Expression · Connection</div>
+
+    <div class="tcm-box">
+      <strong>TCM &amp; Root-Cause Lens</strong>
+      Ovulation is the pivot point — the transition from Yin to Yang, from building to warming. In TCM, the LH surge triggers the Kidney Yang to rise and the egg to be released. This requires strong Kidney Qi, free-flowing Liver Qi (to allow release), and abundant Jing. Anovulation or poor ovulation quality is often rooted in Kidney Yang deficiency, Liver Qi stagnation, or Phlegm-Damp obstruction (common in PCOS). This is the window of conception.
+    </div>
+
+    <div class="overview-grid">
+      <div class="og-cell">
+        <div class="og-cell-header">Ovulation Phase <span class="og-cell-days">Days 14–16</span></div>
+        <div class="og-theme">Theme: Peak expression · Magnetism · Connection</div>
+        <div class="og-block-label">Brain state</div>
+        <p style="font-size:12px;font-weight:300;color:var(--text);line-height:1.6;margin-bottom:0.5rem">Confident, articulate, social, magnetic. Highest verbal fluency &amp; charisma.</p>
+        <div class="og-block-label">Energy</div>
+        <p style="font-size:12px;font-weight:300;color:var(--text);line-height:1.6;margin-bottom:0.5rem">Peak physical and social energy. LH surges. Testosterone briefly rises.</p>
+        <div class="og-block-label">Best cognitive strengths</div>
+        <ul class="og-list">
+          <li>Public speaking &amp; presentations</li>
+          <li>Negotiation &amp; persuasion</li>
+          <li>Leadership &amp; collaboration</li>
+          <li>High-stakes decisions</li>
+        </ul>
+        <div class="og-block-label">What happens in the body</div>
+        <ul class="og-list">
+          <li>LH surge triggers egg release</li>
+          <li>Estrogen peaks then drops</li>
+          <li>Egg is viable 12–24 hours</li>
+          <li>Sperm can survive 3–5 days in fertile mucus</li>
+          <li>BBT rises 0.2–0.5°C post-ovulation</li>
+          <li>Kidney Yang rises (TCM)</li>
+        </ul>
+      </div>
+      <div class="og-cell">
+        <div class="og-cell-header">Supportive Foods &amp; Herbs</div>
+        <div class="og-block-label">Nourishing foods</div>
+        <ul class="og-list">
+          <li>Sunflower &amp; sesame seeds (seed cycling)</li>
+          <li>Light, vibrant whole foods</li>
+          <li>Zinc-rich foods: oysters, pumpkin seeds, beef</li>
+          <li>Antioxidant-rich: pomegranate, berries, beets</li>
+          <li>Eggs &amp; quality animal proteins</li>
+          <li>Anti-inflammatory fats: oily fish, avocado</li>
+          <li>Stay well hydrated — supports fertile mucus</li>
+        </ul>
+        <div class="og-block-label">TCM / naturopathic herbs</div>
+        <ul class="og-list">
+          <li>Vitex (Chaste tree) — LH surge support</li>
+          <li>Red clover — estrogen-supportive isoflavones</li>
+          <li>Liquorice root — LH modulation</li>
+          <li>Tribulus — ovarian stimulation (pre-ovulation)</li>
+          <li>Pomegranate — uterine blood flow, implantation</li>
+        </ul>
+        <div class="og-block-label">Supplements to consider</div>
+        <ul class="og-list">
+          <li>Vitamin E (egg &amp; uterine lining quality)</li>
+          <li>NAC (antioxidant, PCOS, mucus quality)</li>
+          <li>L-Arginine (uterine blood flow)</li>
+          <li>Continue CoQ10 &amp; folate</li>
+        </ul>
+      </div>
+      <div class="og-cell">
+        <div class="og-cell-header">Best Work Focus</div>
+        <ul class="og-list">
+          <li>Big presentations &amp; pitches</li>
+          <li>Launches &amp; important announcements</li>
+          <li>Team meetings &amp; collaboration</li>
+          <li>Difficult conversations &amp; negotiations</li>
+          <li>Networking &amp; visibility</li>
+          <li>Mentoring &amp; leadership</li>
+        </ul>
+        <div class="og-block-label" style="margin-top:1rem">Home &amp; relationship</div>
+        <ul class="og-list">
+          <li>Intimacy &amp; connection with partner</li>
+          <li>Express love, appreciation &amp; desire openly</li>
+          <li>Social gatherings &amp; shared experiences</li>
+          <li>Heart-to-heart conversations</li>
+          <li>This is the window — prioritise connection</li>
+        </ul>
+      </div>
+      <div class="og-cell">
+        <div class="og-cell-header">Creative &amp; Movement</div>
+        <div class="og-block-label">Creative</div>
+        <ul class="og-list">
+          <li>Performing, presenting, teaching</li>
+          <li>Collaborative projects</li>
+          <li>Bold creative output</li>
+          <li>Video, podcast, public expression</li>
+        </ul>
+        <div class="og-block-label" style="margin-top:1rem">Movement</div>
+        <ul class="og-list">
+          <li>Peak performance training</li>
+          <li>Dance, running, HIIT if desired</li>
+          <li>Group fitness &amp; team sports</li>
+          <li>After ovulation: transition to gentler movement</li>
+        </ul>
+        <div class="og-block-label" style="margin-top:1rem">Acupuncture &amp; bodywork</div>
+        <ul class="og-list">
+          <li>Acupuncture around ovulation: triggers &amp; supports release</li>
+          <li>Abdominal massage before (not after) ovulation</li>
+          <li>Rest after ovulation — support implantation</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fertility-banner">
+      <div class="fertility-banner-title">✦ Fertility lens — your conception window</div>
+      <ul>
+        <li>The fertile window is typically 5 days before ovulation + the day of. Egg-white cervical mucus is your most reliable free sign — it keeps sperm alive and guides them.</li>
+        <li>OPK peak = LH surge = ovulation ~24–36 hours away. Time intimacy the day of peak and the day after.</li>
+        <li>BBT: temperature rises &gt;0.2°C and stays elevated confirms ovulation occurred. Track over several cycles to find your true pattern.</li>
+        <li>No confirmed BBT rise or LH surge despite trying? Possible anovulation — worth investigating with a Day 21 progesterone blood test and potentially ultrasound monitoring.</li>
+        <li>Short luteal phase (&lt;10 days from ovulation to period): suggests low progesterone — directly impacts implantation success. Vitex, Vit B6, and progesterone-supporting herbs help.</li>
+        <li>After ovulation: shift to warmth, rest, and nourishment. Avoid vigorous exercise, very cold food, and high stress during the implantation window (days 6–10 post-ovulation).</li>
+      </ul>
+    </div>
+
+    <div class="reflection-title">Ovulation Phase — My Reflections</div>
+    <div class="reflection-divider"></div>
+    <div class="reflection-grid">
+      <div class="rg-cell">
+        <div class="rg-cell-title">Days 14–16</div>
+        <div class="rg-cell-prompt">What I feel:</div>
+        <textarea class="rg-textarea" id="ref-ovulation-feel" placeholder="How does your body feel at its peak? What do you notice?"></textarea>
+        <svg class="rg-blob" width="130" height="130" viewBox="0 0 130 130">
+          <ellipse cx="65" cy="70" rx="58" ry="55" fill="#f5e8d0"/>
+        </svg>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Supportive Foods &amp; Herbs</div>
+        <div class="rg-cell-prompt">What I crave &amp; what helps:</div>
+        <textarea class="rg-textarea" id="ref-ovulation-food" placeholder="What foods feel vibrant and energising right now?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Best Work Focus</div>
+        <div class="rg-cell-prompt">What I enjoy &amp; what flows:</div>
+        <textarea class="rg-textarea" id="ref-ovulation-work" placeholder="What are you most magnetic and capable of right now?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Creative</div>
+        <div class="rg-cell-prompt">What fills me up:</div>
+        <textarea class="rg-textarea" id="ref-ovulation-creative" placeholder="How are you expressing yourself at your fullest?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Home &amp; Relationship</div>
+        <div class="rg-cell-prompt">What I need:</div>
+        <textarea class="rg-textarea" id="ref-ovulation-home" placeholder="How do you want to connect and be received?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Movement</div>
+        <div class="rg-cell-prompt">What my body asks for:</div>
+        <textarea class="rg-textarea" id="ref-ovulation-move" placeholder="What movement feels powerful and alive?"></textarea>
+      </div>
+      <div class="rg-cell" style="grid-column:1/-1">
+        <div class="rg-cell-title">Fertility observations this phase</div>
+        <div class="rg-cell-prompt">OPK readings, mucus, BBT, intimacy timing, how the window felt this cycle:</div>
+        <textarea class="rg-textarea" id="ref-ovulation-fertility" rows="4" placeholder="e.g. OPK peaked on day 14, egg-white mucus days 12–15, BBT rose on day 15, intimacy on days 13 &amp; 14..."></textarea>
+      </div>
+    </div>
+    <div class="save-reflections">
+      <button class="btn-save" onclick="saveReflections('ovulation')">Save reflections</button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       LUTEAL PHASE
+  ══════════════════════════════════════ -->
+  <div class="phase-page" id="page-luteal">
+
+    <div class="overview-title">Luteal Phase</div>
+    <div class="overview-subtitle">Days 17–28 · Integration · Nesting · Completion</div>
+
+    <div class="tcm-box">
+      <strong>TCM &amp; Root-Cause Lens</strong>
+      The luteal phase is governed by Kidney Yang — the warming, transforming energy that sustains the corpus luteum and maintains progesterone. For conception, this phase must be warm, long enough (minimum 10 days), and progesterone must be sufficient to hold an implanting embryo. In TCM, luteal phase defect is seen as Kidney Yang deficiency, sometimes combined with Liver Qi stagnation. This is also when the nervous system is most sensitive — unprocessed emotions, poor sleep, and high stress directly suppress progesterone.
+    </div>
+
+    <div class="overview-grid">
+      <div class="og-cell">
+        <div class="og-cell-header">Luteal Phase <span class="og-cell-days">Days 17–28</span></div>
+        <div class="og-theme">Theme: Integration · Nesting · Completion</div>
+        <div class="og-block-label">Brain state</div>
+        <p style="font-size:12px;font-weight:300;color:var(--text);line-height:1.6;margin-bottom:0.5rem">Detail-focused, methodical, inward. Less social. Sensitivity heightens.</p>
+        <div class="og-block-label">Energy</div>
+        <p style="font-size:12px;font-weight:300;color:var(--text);line-height:1.6;margin-bottom:0.5rem">Declines progressively. Progesterone is calming but sedating. Body prepares to shed — or to hold an embryo.</p>
+        <div class="og-block-label">Best cognitive strengths</div>
+        <ul class="og-list">
+          <li>Detail work &amp; editing</li>
+          <li>Systems &amp; organisation</li>
+          <li>Finishing projects</li>
+          <li>Discernment &amp; quality control</li>
+        </ul>
+        <div class="og-block-label">What happens in the body</div>
+        <ul class="og-list">
+          <li>Progesterone rises (from corpus luteum)</li>
+          <li>BBT remains elevated</li>
+          <li>Uterus prepares for implantation (days 6–10 post-ovulation)</li>
+          <li>If no implantation: progesterone falls, period triggered</li>
+          <li>Kidney Yang warms the uterus (TCM)</li>
+        </ul>
+      </div>
+      <div class="og-cell">
+        <div class="og-cell-header">Supportive Foods &amp; Herbs</div>
+        <div class="og-block-label">Nourishing foods</div>
+        <ul class="og-list">
+          <li>Sesame &amp; sunflower seeds (seed cycling)</li>
+          <li>Complex carbohydrates: sweet potato, quinoa, oats</li>
+          <li>Warm, cooked, grounding meals</li>
+          <li>Magnesium-rich: dark chocolate, leafy greens, nuts</li>
+          <li>B6 foods: turkey, banana, chickpeas, salmon</li>
+          <li>Zinc: oysters, pumpkin seeds, beef</li>
+          <li>Reduce sugar, caffeine &amp; alcohol (worsen PMS)</li>
+          <li>Avoid cold &amp; raw food — uterus needs warmth</li>
+        </ul>
+        <div class="og-block-label">TCM / naturopathic herbs</div>
+        <ul class="og-list">
+          <li>Vitex (Chaste tree) — corpus luteum, progesterone support</li>
+          <li>Ashwagandha — cortisol, stress, progesterone protection</li>
+          <li>Wild yam — progesterone precursor support</li>
+          <li>Motherwort — uterine &amp; nervous system support</li>
+          <li>Reishi — adaptogen, immune modulation</li>
+          <li>Saffron — mood, serotonin, PMS</li>
+        </ul>
+        <div class="og-block-label">Supplements to consider</div>
+        <ul class="og-list">
+          <li>Vitamin B6 (progesterone, PMS, luteal support)</li>
+          <li>Magnesium glycinate (sleep, cramps, anxiety)</li>
+          <li>Vitex / Agnus castus</li>
+          <li>Continue: folate, CoQ10, omega-3, Vit D</li>
+        </ul>
+      </div>
+      <div class="og-cell">
+        <div class="og-cell-header">Best Work Focus</div>
+        <ul class="og-list">
+          <li>Editing, refining, finishing</li>
+          <li>Admin, systems &amp; organisation</li>
+          <li>Responding to messages &amp; clearing backlog</li>
+          <li>Detailed analytical work</li>
+          <li>Planning next cycle's goals</li>
+          <li>SOPs, documentation, processes</li>
+        </ul>
+        <p class="og-avoid">Avoid: new launches, high-stakes events in late luteal. Work with your energy, not against it.</p>
+        <div class="og-block-label" style="margin-top:1rem">Home &amp; relationship</div>
+        <ul class="og-list">
+          <li>Nest &amp; create comfort at home</li>
+          <li>Communicate needs clearly (don't withdraw)</li>
+          <li>Set boundaries gently</li>
+          <li>Ask for support — this is not weakness</li>
+          <li>Slow parenting, extra patience with self</li>
+        </ul>
+      </div>
+      <div class="og-cell">
+        <div class="og-cell-header">Creative &amp; Movement</div>
+        <div class="og-block-label">Creative</div>
+        <ul class="og-list">
+          <li>Editing &amp; refining existing work</li>
+          <li>Crafting, cooking, making</li>
+          <li>Journaling what needs to be released</li>
+          <li>Gentle music, reading, slow art</li>
+        </ul>
+        <div class="og-block-label" style="margin-top:1rem">Movement</div>
+        <ul class="og-list">
+          <li>Pilates, yoga, swimming</li>
+          <li>Walking, hiking in nature</li>
+          <li>Strength at lower intensity</li>
+          <li>Late luteal: very gentle movement only</li>
+          <li>During implantation window (days 6–10 post-ov): rest, warmth, calm</li>
+        </ul>
+        <div class="og-block-label" style="margin-top:1rem">Acupuncture &amp; bodywork</div>
+        <ul class="og-list">
+          <li>Acupuncture: progesterone support, Yang warming</li>
+          <li>Womb warming: moxa, heat packs (lower abdomen)</li>
+          <li>No castor oil packs in luteal phase (TTC)</li>
+          <li>Feet &amp; lower back warmth (Kidney Yang)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="fertility-banner">
+      <div class="fertility-banner-title">✦ Fertility lens — the implantation window &amp; luteal support</div>
+      <ul>
+        <li>Days 6–10 post-ovulation is the implantation window. Prioritise: warmth, rest, nourishment, low stress. This is not the time for intense exercise, fasting, or cold exposure.</li>
+        <li>Luteal phase defect (LPD): phase shorter than 10 days, or Day 21 progesterone below 30 nmol/L suggests inadequate corpus luteum function — a direct barrier to implantation.</li>
+        <li>PMS is not normal — it is a sign of hormonal imbalance (often estrogen dominance relative to low progesterone, or low serotonin/dopamine). Severe PMS is addressable at the root.</li>
+        <li>Spotting before period (premenstrual spotting): often low progesterone or Kidney Yang deficiency in TCM. Vitex, B6, and progesterone support can help significantly.</li>
+        <li>PMDD or severe mood shifts: consider DUTCH hormone testing to map your full hormonal picture across the cycle.</li>
+        <li>The two-week wait: anxiety is understandable but cortisol actively suppresses progesterone. Practices that regulate the nervous system (breathwork, gentle yoga, acupuncture, meditation) are genuinely therapeutic here.</li>
+        <li>Consider: Day 21 (or 7 days post-ovulation) progesterone blood test — the most important fertility marker in this phase.</li>
+      </ul>
+    </div>
+
+    <div class="reflection-title">Luteal Phase — My Reflections</div>
+    <div class="reflection-divider"></div>
+    <div class="reflection-grid">
+      <div class="rg-cell">
+        <div class="rg-cell-title">Days 17–28</div>
+        <div class="rg-cell-prompt">What I feel:</div>
+        <textarea class="rg-textarea" id="ref-luteal-feel" placeholder="How does your energy and mood shift? What symptoms arise?"></textarea>
+        <svg class="rg-blob" width="130" height="140" viewBox="0 0 130 140">
+          <ellipse cx="65" cy="75" rx="58" ry="65" fill="#e8e0d4"/>
+        </svg>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Supportive Foods &amp; Herbs</div>
+        <div class="rg-cell-prompt">What I crave &amp; what helps:</div>
+        <textarea class="rg-textarea" id="ref-luteal-food" placeholder="What foods feel grounding and warm right now?"></textarea>
+        <svg class="rg-blob" width="120" height="120" viewBox="0 0 120 120">
+          <rect x="10" y="10" width="100" height="100" rx="35" fill="#f0e4d0"/>
+        </svg>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Best Work Focus</div>
+        <div class="rg-cell-prompt">What I enjoy &amp; what flows:</div>
+        <textarea class="rg-textarea" id="ref-luteal-work" placeholder="What kind of tasks feel manageable and satisfying?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Creative</div>
+        <div class="rg-cell-prompt">What fills me up:</div>
+        <textarea class="rg-textarea" id="ref-luteal-creative" placeholder="What slow, nesting creativity calls to you?"></textarea>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Home &amp; Relationship</div>
+        <div class="rg-cell-prompt">What I need:</div>
+        <textarea class="rg-textarea" id="ref-luteal-home" placeholder="What do you need from your home and partner right now?"></textarea>
+        <svg class="rg-blob" width="140" height="150" viewBox="0 0 140 150">
+          <rect x="10" y="10" width="120" height="130" rx="40" fill="#d4b896"/>
+        </svg>
+      </div>
+      <div class="rg-cell">
+        <div class="rg-cell-title">Movement</div>
+        <div class="rg-cell-prompt">What my body asks for:</div>
+        <textarea class="rg-textarea" id="ref-luteal-move" placeholder="What gentle movement honours where you are?"></textarea>
+        <svg class="rg-blob" width="120" height="120" viewBox="0 0 120 120">
+          <ellipse cx="65" cy="65" rx="52" ry="52" fill="#e8e4dc"/>
+        </svg>
+      </div>
+      <div class="rg-cell" style="grid-column:1/-1">
+        <div class="rg-cell-title">Fertility observations this phase</div>
+        <div class="rg-cell-prompt">BBT pattern, progesterone symptoms, PMS, implantation window experience, two-week wait thoughts:</div>
+        <textarea class="rg-textarea" id="ref-luteal-fertility" rows="4" placeholder="e.g. BBT stayed elevated until day 26, some breast tenderness (progesterone sign), spotted at day 11 post-ov, feeling anxious during the wait — noting to bring to my practitioner..."></textarea>
+      </div>
+    </div>
+    <div class="save-reflections">
+      <button class="btn-save" onclick="saveReflections('luteal')">Save reflections</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+'use strict';
+const REFL_KEY = 'hormone_phase_reflections';
+
+function showPhase(phase) {
+  document.querySelectorAll('.phase-page').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.phase-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + phase).classList.add('visible');
+  event.currentTarget.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  loadReflections(phase);
+}
+
+function saveReflections(phase) {
+  const data = JSON.parse(localStorage.getItem(REFL_KEY) || '{}');
+  data[phase] = {};
+  document.querySelectorAll('[id^="ref-' + phase + '-"]').forEach(el => {
+    const key = el.id.replace('ref-' + phase + '-', '');
+    data[phase][key] = el.value;
+  });
+  localStorage.setItem(REFL_KEY, JSON.stringify(data));
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function loadReflections(phase) {
+  const data = JSON.parse(localStorage.getItem(REFL_KEY) || '{}');
+  if (!data[phase]) return;
+  Object.entries(data[phase]).forEach(([key, val]) => {
+    const el = document.getElementById('ref-' + phase + '-' + key);
+    if (el) el.value = val;
+  });
+}
+
+// Load whichever phase is visible on init
+document.addEventListener('DOMContentLoaded', () => loadReflections('menstrual'));
+</script>
+</body>
+</html>
