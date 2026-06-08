@@ -530,3 +530,38 @@ h1, h2, h3 {
   .row-2 { grid-template-columns: 1fr; }
   .cycle-phase { font-size: 10px; padding: 8px 2px; }
 }
+
+/* ── Phase wisdom card ─────────────────── */
+.phase-wisdom {
+  margin-bottom: 1rem;
+  background: var(--sand-pale);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.4rem 1.1rem 1.2rem;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  animation: wisdomFade 0.4s ease;
+}
+@keyframes wisdomFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.wisdom-moon {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.wisdom-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.75;
+  margin: 0;
+  border: none;
+  padding: 0;
+  letter-spacing: 0.01em;
+}
+.wisdom-text::before { content: none; }
