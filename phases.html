@@ -306,9 +306,26 @@
       .overview-grid, .reflection-grid { grid-template-columns: 1fr; }
       .og-cell-header { flex-direction: column; gap: 2px; }
     }
-  </style>
+  [data-theme="dark"] .og-cell,
+[data-theme="dark"] .rg-cell { background: #231c15; }
+[data-theme="dark"] .overview-grid,
+[data-theme="dark"] .reflection-grid { border-color: var(--border); }
+[data-theme="dark"] .tcm-box { background: #2a2118; }
+[data-theme="dark"] .fertility-banner { background: #231c15; border-color: var(--border); }
+[data-theme="dark"] .rg-textarea { color: var(--text); }
+[data-theme="dark"] body { background: #1a1410; color: #f0e8dc; }
+[data-theme="dark"] .og-list li,
+[data-theme="dark"] .og-theme,
+[data-theme="dark"] p { color: #e0d4c4; }
+[data-theme="dark"] .og-block-label { color: #a89880; }
+[data-theme="dark"] .og-avoid { color: #c09888; }
+</style>
 </head>
 <body>
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+  <span class="toggle-icon" id="toggleIcon">🌙</span>
+  <span id="toggleLabel">Dark</span>
+</button>
 <div class="app">
 
   <div class="toast" id="toast">Reflections saved ✓</div>
@@ -1094,6 +1111,26 @@ function loadReflections(phase) {
 
 // Load whichever phase is visible on init
 document.addEventListener('DOMContentLoaded', () => loadReflections('menstrual'));
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const icon  = document.getElementById('toggleIcon');
+  const label = document.getElementById('toggleLabel');
+  if (theme === 'dark') {
+    if (icon)  icon.textContent  = '☀️';
+    if (label) label.textContent = 'Light';
+  } else {
+    if (icon)  icon.textContent  = '🌙';
+    if (label) label.textContent = 'Dark';
+  }
+}
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem('hormone_tracker_theme', next);
+}
+(function(){ applyTheme(localStorage.getItem('hormone_tracker_theme') || 'light'); })();
 </script>
 </body>
 </html>
