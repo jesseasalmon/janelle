@@ -334,3 +334,102 @@ h1, h2, h3 { font-family: 'Cormorant Garamond', serif; font-weight: 400; }
   .cycle-phase { font-size: 10px; padding: 8px 2px; }
   .period-log-row { flex-direction: column; }
 }
+
+/* ── Dark mode ───────────────────────────── */
+[data-theme="dark"] {
+  --sand:        #d4b07a;
+  --sand-dark:   #e8c98a;
+  --sand-light:  #5a4a34;
+  --sand-pale:   #2a2118;
+  --text:        #f0e8dc;
+  --muted:       #a89880;
+  --border:      #4a3d2e;
+  --success:     #6a9e72;
+  --bg:          #1a1410;
+}
+
+[data-theme="dark"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+[data-theme="dark"] .history-card,
+[data-theme="dark"] .period-log-item,
+[data-theme="dark"] .prediction-card {
+  background: #231c15;
+}
+
+[data-theme="dark"] .field input,
+[data-theme="dark"] .field textarea,
+[data-theme="dark"] .field select,
+[data-theme="dark"] .task-input {
+  color: var(--text);
+  background: transparent;
+}
+
+[data-theme="dark"] .field input::placeholder,
+[data-theme="dark"] .field textarea::placeholder { color: #5a4e40; }
+
+[data-theme="dark"] .pill-btn.active {
+  background: #3a2e1e;
+}
+
+[data-theme="dark"] .cycle-intel,
+[data-theme="dark"] .phase-banner,
+[data-theme="dark"] .phase-wisdom {
+  background: #231c15;
+}
+
+[data-theme="dark"] .intel-pill {
+  background: #231c15;
+}
+
+[data-theme="dark"] .fertile-pill {
+  background: #2e2010;
+}
+
+[data-theme="dark"] .btn-log-period {
+  background: var(--sand-dark);
+  color: #1a1410;
+}
+
+[data-theme="dark"] .btn-save {
+  background: var(--sand-dark);
+  color: #1a1410;
+}
+
+[data-theme="dark"] .task-check.checked,
+[data-theme="dark"] .fert-check-box.checked {
+  background: #3a2e1e;
+}
+
+/* ── Theme toggle button ── */
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 200;
+  background: var(--sand-pale);
+  border: 0.5px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+.theme-toggle:hover {
+  border-color: var(--sand);
+  color: var(--sand-dark);
+}
+.theme-toggle .toggle-icon { font-size: 14px; }
+
+[data-theme="dark"] .theme-toggle {
+  background: #2a2118;
+}
