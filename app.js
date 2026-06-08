@@ -649,3 +649,30 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCycleIntel();
   loadEntryForDate(dateKey(currentDate));
 });
+
+// ── Theme toggle ──────────────────────────
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const icon  = document.getElementById('toggleIcon');
+  const label = document.getElementById('toggleLabel');
+  if (theme === 'dark') {
+    if (icon)  icon.textContent  = '☀️';
+    if (label) label.textContent = 'Light';
+  } else {
+    if (icon)  icon.textContent  = '🌙';
+    if (label) label.textContent = 'Dark';
+  }
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next    = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem('hormone_tracker_theme', next);
+}
+
+// Load saved theme on init (runs before DOMContentLoaded fires)
+(function () {
+  const saved = localStorage.getItem('hormone_tracker_theme') || 'light';
+  applyTheme(saved);
+})();
