@@ -50,6 +50,7 @@ function setPhase(p) {
   document.getElementById('phaseMoon').textContent = d.moon;
   document.getElementById('phaseName').textContent  = d.name;
   document.getElementById('phaseHint').textContent  = d.hint;
+  updateWisdom(p);
 }
 
 // ── Star ratings ──────────────────────────
@@ -404,3 +405,36 @@ document.addEventListener('DOMContentLoaded', () => {
   renderHistory();
   loadEntryForDate(dateKey(currentDate));
 });
+
+// ── Phase wisdom ───────────────────────────
+const phaseWisdom = {
+  menstruation: {
+    moon: '🌑',
+    text: `You are in your most intuitive season. Your body is releasing what no longer serves — honour that clearing with rest, warmth, and gentleness. This is not a time to push; it is a time to listen. The wisdom that surfaces now is some of the clearest you will receive all cycle.`,
+  },
+  follicular: {
+    moon: '🌒',
+    text: `Something new is building in you — quietly, steadily, full of potential. Your energy is returning like early morning light, and your mind is open to possibilities it couldn't see last week. Nourish this emergence with good food, curiosity, and space to begin. The seeds you plant now grow through the whole cycle.`,
+  },
+  ovulation: {
+    moon: '🌕',
+    text: `You are at your fullest expression. Your body is doing something extraordinary — offering the gift of life, connection, and creativity all at once. Let yourself be seen, heard, and felt. This window is precious: be present in your body, present with your partner, and trust the intelligence of this moment.`,
+  },
+  luteal: {
+    moon: '🌗',
+    text: `Your body is preparing — either to welcome new life, or to release and begin again. Both are sacred. What rises to the surface now — emotions, clarity, needs — deserves to be heard rather than suppressed. Tend to yourself with warmth, boundaries, and deep rest. You are not too much; you are in exactly the right phase.`,
+  },
+};
+
+function updateWisdom(phase) {
+  const card = document.getElementById('phaseWisdom');
+  const moon = document.getElementById('wisdomMoon');
+  const text = document.getElementById('wisdomText');
+  if (!phase || !phaseWisdom[phase]) {
+    card.style.display = 'none';
+    return;
+  }
+  moon.textContent = phaseWisdom[phase].moon;
+  text.textContent  = phaseWisdom[phase].text;
+  card.style.display = 'flex';
+}
