@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supplement Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .supp-intro{font-size:13px;font-weight:400;color:var(--muted);text-align:center;max-width:480px;margin:0 auto 1.5rem;line-height:1.7}
+    .phase-pill-bar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem}
+    .phase-pill{font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;border:0.5px solid var(--border);background:none;color:var(--muted);padding:7px 16px;border-radius:20px;cursor:pointer;transition:all 0.2s}
+    .phase-pill:hover{border-color:var(--sand);color:var(--sand-dark)}
+    .phase-pill.active{background:var(--sand);color:#fff;border-color:var(--sand)}
+    .today-card{background:var(--sand-pale);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:14px}
+    .today-moon{font-size:24px;flex-shrink:0}
+    .today-label{font-size:10px;font-weight:600;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase}
+    .today-phase{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--sand-dark)}
+    .today-day{font-size:12px;font-weight:500;color:var(--muted);margin-top:2px}
+    .supp-section{margin-bottom:1.5rem}
+    .supp-section-title{font-size:11px;font-weight:600;letter-spacing:0.12em;color:var(--sand-dark);text-transform:uppercase;border-bottom:0.5px solid var(--border);padding-bottom:6px;margin-bottom:10px}
+    .supp-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+    .supp-row:last-child{border-bottom:none}
+    .supp-check{width:22px;height:22px;border:0.5px solid var(--border);border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:transparent;transition:all 0.15s;margin-top:1px}
+    .supp-check.checked{border-color:var(--sand);background:var(--sand-pale);color:var(--sand)}
+    .supp-info{flex:1}
+    .supp-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px}
+    .supp-dose{font-size:12px;font-weight:400;color:var(--muted)}
+    .supp-why{font-size:11px;font-weight:400;color:var(--muted);font-style:italic;line-height:1.5;margin-top:3px}
+    .supp-timing{font-size:10px;font-weight:600;letter-spacing:0.06em;color:var(--sand-dark);background:var(--sand-pale);border:0.5px solid var(--sand-light);padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0;align-self:flex-start;margin-top:2px}
+    .progress-bar-wrap{margin-bottom:1.25rem}
+    .progress-label{display:flex;justify-content:space-between;font-size:11px;font-weight:500;color:var(--muted);margin-bottom:5px}
+    .progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+    .progress-fill{height:100%;background:var(--sand);border-radius:3px;transition:width 0.4s ease}
+    .save-day-btn{display:block;width:100%;margin:1rem 0;background:var(--sand);color:#fff;border:none;padding:12px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;border-radius:4px;transition:background 0.2s}
+    .save-day-btn:hover{background:var(--sand-dark)}
+    .history-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:1.5rem}
+    .history-day-cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;cursor:default;border:0.5px solid var(--border);position:relative}
+    .history-day-cell.has-data{background:var(--sand-pale);border-color:var(--sand-light);color:var(--sand-dark)}
+    .history-day-cell.full{background:var(--sand);border-color:var(--sand);color:#fff}
+    .history-day-cell .day-num{font-size:9px;position:absolute;top:3px;left:4px;color:var(--muted)}
+    .history-day-cell.has-data .day-num{color:var(--sand-dark)}
+    .history-day-cell.full .day-num{color:rgba(255,255,255,0.8)}
+    .add-custom-row{display:flex;gap:8px;margin-top:8px}
+    .add-custom-row input{flex:1;background:none;border:none;border-bottom:0.5px solid var(--border);padding:7px 2px;font-family:'Jost',sans-serif;font-size:13px;font-weight:400;color:var(--text);outline:none}
+    .add-custom-row input:focus{border-bottom-color:var(--sand)}
+    .btn-add-custom{background:none;border:0.5px solid var(--sand-light);color:var(--sand-dark);font-family:'Jost',sans-serif;font-size:11px;font-weight:600;padding:6px 14px;border-radius:4px;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+    .btn-add-custom:hover{background:var(--sand-pale)}
+    [data-theme="dark"] .today-card,[data-theme="dark"] .history-day-cell.has-data{background:#231c15}
+    [data-theme="dark"] .history-day-cell.full{background:var(--sand)}
+    [data-theme="dark"] .supp-timing{background:#2a2118}
+  </style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+  <span class="toggle-icon" id="toggleIcon">🌙</span>
+  <span id="toggleLabel">Dark</span>
+</button>
+
+<div class="app">
+  <div class="toast" id="toast">Saved ✓</div>
+
+  <header class="header">
+    <div class="arch-decoration" aria-hidden="true">
+      <svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" width="120" height="60">
+        <path d="M10,60 Q10,10 60,10 Q110,10 110,60" fill="none" stroke="#c9a96e" stroke-width="0.8" opacity="0.6"/>
+        <path d="M20,60 Q20,18 60,18 Q100,18 100,60" fill="none" stroke="#c9a96e" stroke-width="0.7" opacity="0.5"/>
+        <path d="M30,60 Q30,26 60,26 Q90,26 90,60" fill="none" stroke="#c9a96e" stroke-width="0.6" opacity="0.4"/>
+      </svg>
+    </div>
+    <h1>Supplement Tracker</h1>
+    <p style="font-size:12px;color:var(--muted);margin-top:0.5rem;font-style:italic;letter-spacing:0.04em">Right supplement, right phase, right time</p>
+  </header>
+
+  <div style="text-align:center;margin-top:0.75rem;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+    <a href="index.html" class="back-link">← Daily tracker</a>
+    <a href="phases.html" class="back-link">Phase guide</a>
+    <a href="symptoms.html" class="back-link">Symptom decoder</a>
+  </div>
+  <p style="text-align:center;font-size:10px;color:var(--muted);margin:0.5rem 0 1rem;font-style:italic">Protocol sourced from <em>Hormone Intelligence</em> — Aviva Romm, MD</p>
+
+  <!-- Today card -->
+  <div class="today-card">
+    <div class="today-moon" id="suppMoon">🌙</div>
+    <div>
+      <div class="today-label">Today's phase</div>
+      <div class="today-phase" id="suppPhaseName">Set your phase on the tracker</div>
+      <div class="today-day" id="suppCycleDay"></div>
+    </div>
+  </div>
+
+  <!-- Phase override pills -->
+  <div class="phase-pill-bar">
+    <button class="phase-pill" id="spill-menstruation" onclick="setSupPhase('menstruation')">🌑 Menstrual</button>
+    <button class="phase-pill" id="spill-follicular"   onclick="setSupPhase('follicular')">🌒 Follicular</button>
+    <button class="phase-pill" id="spill-ovulation"    onclick="setSupPhase('ovulation')">🌕 Ovulation</button>
+    <button class="phase-pill" id="spill-luteal"       onclick="setSupPhase('luteal')">🌗 Luteal</button>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span id="progressText">0 of 0 taken today</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Supplement list -->
+  <div id="suppList"></div>
+
+  <!-- Custom supplements -->
+  <div class="supp-section" style="margin-top:0.5rem">
+    <div class="supp-section-title">My additional supplements</div>
+    <div id="customSuppList"></div>
+    <div class="add-custom-row">
+      <input type="text" id="customSuppName" placeholder="Supplement name + dose..." />
+      <button class="btn-add-custom" onclick="addCustomSupp()">+ Add</button>
+    </div>
+  </div>
+
+  <button class="save-day-btn" onclick="saveDaySupps()">Save today's log</button>
+
+  <!-- 30-day history -->
+  <div class="supp-section">
+    <div class="supp-section-title">30-day consistency</div>
+    <div class="history-grid" id="historyGrid"></div>
+    <p style="font-size:11px;color:var(--muted);text-align:center">
+      <span style="display:inline-block;width:12px;height:12px;background:var(--sand);border-radius:2px;vertical-align:middle;margin-right:4px"></span>All taken &nbsp;
+      <span style="display:inline-block;width:12px;height:12px;background:var(--sand-pale);border:0.5px solid var(--sand-light);border-radius:2px;vertical-align:middle;margin-right:4px"></span>Partial &nbsp;
+      <span style="display:inline-block;width:12px;height:12px;border:0.5px solid var(--border);border-radius:2px;vertical-align:middle;margin-right:4px"></span>Not logged
+    </p>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const SUPP_KEY    = 'hormone_supp_log';
+const CUSTOM_KEY  = 'hormone_custom_supps';
+const PERIOD_KEY  = 'hormone_tracker_periods';
+
+// ── Supplement database by phase ──────────────────
+const suppDB = {
+  always: [
+    { id:'folate',   name:'Methylfolate',    dose:'800–1000mcg daily',   why:'Neural tube protection, fertility, reduces miscarriage risk (Romm, Ch. 15)', timing:'With breakfast' },
+    { id:'coq10',    name:'CoQ10 / Ubiquinol', dose:'200–600mg daily',   why:'Mitochondrial function in eggs — Romm\'s strongest evidence-based supplement for egg quality (Ch. 11)', timing:'With a meal' },
+    { id:'omega3',   name:'Omega-3 EPA/DHA',  dose:'2–3g daily',         why:'Oocyte formation, reduces inflammation, lowers prostaglandins (Romm, Ch. 6 & 15)', timing:'With dinner' },
+    { id:'vitd',     name:'Vitamin D3 + K2',  dose:'2000–4000 IU D3 daily', why:'Romm: higher Vit D = 35% higher IVF pregnancy rates; supports ovulation (Ch. 15)', timing:'With a fat-containing meal' },
+    { id:'prenatal', name:'Prenatal vitamin (methylfolate form)', dose:'1 daily', why:'Zinc, choline, iodine, iron — Romm specifies methylfolate form, not folic acid (Ch. 15)', timing:'With breakfast' },
+    { id:'probiotic',name:'Probiotic (Lactobacillus)', dose:'10–50 billion CFU', why:'Romm: L. rhamnosus, L. reuteri, L. crispatus give "fertility advantage" via estrobolome support (Ch. 15)', timing:'Morning, away from antibiotics' },
+  ],
+  menstruation: [
+    { id:'mag-mens', name:'Magnesium glycinate', dose:'300–400mg',  why:'Reduces cramping, improves sleep, calms nervous system — Romm\'s top PMS and menstrual remedy (Ch. 12)', timing:'Evening' },
+    { id:'iron',     name:'Iron bisglycinate + Vit C', dose:'25–50mg iron', why:'Replenishes iron lost through menstrual blood — low ferritin linked to anovulation (Romm, Ch. 6)', timing:'Away from tea/coffee' },
+    { id:'vitc-mens',name:'Vitamin C',           dose:'500–1000mg',  why:'Enhances iron absorption; anti-inflammatory; supports corpus luteum (Romm, Ch. 15)', timing:'With iron supplement' },
+  ],
+  follicular: [
+    { id:'zinc',     name:'Zinc',               dose:'15–25mg',     why:'Folliculogenesis, protects egg from oxidative damage, low zinc linked to lower fertility (Romm, Ch. 15)', timing:'With food' },
+    { id:'inositol', name:'Myo-inositol',        dose:'2000–4000mg', why:'Insulin sensitivity, ovarian function — Romm: comparable to Metformin for PCOS ovulation (Ch. 13)', timing:'Split morning/evening, away from food' },
+    { id:'vitc-fol', name:'Vitamin C',           dose:'500–1000mg',  why:'Promotes ovulation in hypothalamic amenorrhea; antioxidant protection for developing follicles (Romm, Ch. 15)', timing:'With breakfast' },
+    { id:'epo',      name:'Evening primrose oil', dose:'1500mg',     why:'Supports cervical mucus quality — take follicular phase only, stop at ovulation', timing:'With dinner — STOP at ovulation' },
+  ],
+  ovulation: [
+    { id:'vite',     name:'Vitamin E',           dose:'400 IU',      why:'Egg quality and uterine lining support; antioxidant protection at the time of fertilisation (Romm, Ch. 15)', timing:'With a fat-containing meal' },
+    { id:'vitc-ov',  name:'Vitamin C',           dose:'500–1000mg',  why:'Antioxidant at time of fertilisation; corpus luteum support (Romm, Ch. 15)', timing:'With breakfast' },
+    { id:'larg',     name:'L-Arginine',          dose:'2–3g',        why:'Uterine blood flow and endometrial receptivity — supports implantation environment (Romm, Ch. 15)', timing:'Away from food' },
+    { id:'nac',      name:'NAC (N-Acetyl Cysteine)', dose:'600mg',   why:'Antioxidant, improves mucus quality, PCOS support — stop after confirmed ovulation if TTC (Romm, Ch. 15)', timing:'Morning — STOP after ovulation if TTC' },
+  ],
+  luteal: [
+    { id:'vitex',    name:'Vitex (Chaste tree)', dose:'400–500mg extract', why:'Corpus luteum support, lengthens luteal phase — Romm cites Stanford study: 32% improved fertility (Ch. 15)', timing:'Morning on empty stomach' },
+    { id:'b6',       name:'Vitamin B6 (as P5P)', dose:'50–100mg',   why:'Progesterone production support; implantation; Romm: especially important post-OCP (Ch. 15)', timing:'With breakfast' },
+    { id:'mag-lut',  name:'Magnesium glycinate', dose:'300–400mg',  why:'Sleep, reduces PMS and anxiety, calms cortisol — cortisol suppresses progesterone (Romm, Ch. 7 & 12)', timing:'Evening' },
+    { id:'ashwa',    name:'Ashwagandha',          dose:'300–500mg KSM-66', why:'HPA axis regulation — reduces cortisol which competes with progesterone production (Romm, Ch. 7)', timing:'Evening with dinner' },
+    { id:'vitc-lut', name:'Vitamin C',           dose:'500–1000mg',  why:'Corpus luteum and progesterone support; antioxidant during implantation window (Romm, Ch. 15)', timing:'With breakfast' },
+  ],
+};
+
+const phaseNames = {
+  menstruation:{ moon:'🌑', name:'Menstrual',   days:'Days 1–7' },
+  follicular:  { moon:'🌒', name:'Follicular',  days:'Days 6–14' },
+  ovulation:   { moon:'🌕', name:'Ovulation',   days:'Days 14–16' },
+  luteal:      { moon:'🌗', name:'Luteal',       days:'Days 17–28' },
+};
+
+let currentPhase   = '';
+let checkedToday   = {};   // suppId -> bool
+let customSupps    = [];   // [{id,name,checked}]
+
+// ── Date helpers ──────────────────────────────────
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadSuppLog() {
+  try { return JSON.parse(localStorage.getItem(SUPP_KEY)) || {}; } catch { return {}; }
+}
+function saveSuppLog(log) { localStorage.setItem(SUPP_KEY, JSON.stringify(log)); }
+function loadCustomSupps() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || []; } catch { return []; }
+}
+function saveCustomSupps() { localStorage.setItem(CUSTOM_KEY, JSON.stringify(customSupps)); }
+
+// ── Detect phase from period data ─────────────────
+function detectPhaseFromPeriods() {
+  try {
+    const periods = JSON.parse(localStorage.getItem(PERIOD_KEY)) || [];
+    if (!periods.length) return null;
+    const last = periods[periods.length - 1];
+    const today = new Date();
+    const start = new Date(last.start + 'T12:00:00');
+    const diff  = Math.floor((today - start) / 86400000);
+    const cycleDay = diff + 1;
+
+    // Avg cycle len
+    let avgLen = 28;
+    if (periods.length >= 2) {
+      const lens = [];
+      for (let i = 1; i < periods.length; i++) {
+        const a = new Date(periods[i-1].start+'T12:00:00');
+        const b = new Date(periods[i].start+'T12:00:00');
+        const l = Math.round((b-a)/86400000);
+        if (l >= 20 && l <= 45) lens.push(l);
+      }
+      if (lens.length) avgLen = Math.round(lens.reduce((a,b)=>a+b,0)/lens.length);
+    }
+    const ovDay = avgLen - 14;
+    if (cycleDay <= 6)               return { phase:'menstruation', day:cycleDay };
+    if (cycleDay <= ovDay - 1)       return { phase:'follicular',   day:cycleDay };
+    if (cycleDay <= ovDay + 2)       return { phase:'ovulation',    day:cycleDay };
+    return                                  { phase:'luteal',        day:cycleDay };
+  } catch { return null; }
+}
+
+// ── Render supplements ────────────────────────────
+function setSupPhase(phase) {
+  currentPhase = phase;
+  document.querySelectorAll('.phase-pill').forEach(b => b.classList.remove('active'));
+  const pill = document.getElementById('spill-' + phase);
+  if (pill) pill.classList.add('active');
+  const pd = phaseNames[phase];
+  document.getElementById('suppMoon').textContent    = pd.moon;
+  document.getElementById('suppPhaseName').textContent = pd.name + ' phase';
+  document.getElementById('suppCycleDay').textContent  = pd.days;
+  renderSupps();
+}
+
+function renderSupps() {
+  const today = todayKey();
+  const log = loadSuppLog();
+  checkedToday = (log[today] && log[today].checked) ? { ...log[today].checked } : {};
+
+  const container = document.getElementById('suppList');
+  container.innerHTML = '';
+
+  // Always
+  renderSection(container, 'Every day (always)', suppDB.always);
+
+  // Phase-specific
+  if (currentPhase && suppDB[currentPhase]) {
+    const label = phaseNames[currentPhase]?.name + ' phase supplements';
+    renderSection(container, label, suppDB[currentPhase]);
+  }
+
+  renderCustomSupps();
+  updateProgress();
+}
+
+function renderSection(container, title, items) {
+  const sec = document.createElement('div');
+  sec.className = 'supp-section';
+  sec.innerHTML = `<div class="supp-section-title">${title}</div>`;
+  items.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'supp-row';
+    const checked = checkedToday[s.id] || false;
+    row.innerHTML = `
+      <div class="supp-check ${checked ? 'checked' : ''}" id="chk-${s.id}" role="checkbox" aria-checked="${checked}" onclick="toggleSupp('${s.id}')">${checked ? '✓' : ''}</div>
+      <div class="supp-info">
+        <div class="supp-name">${s.name}</div>
+        <div class="supp-dose">${s.dose}</div>
+        <div class="supp-why">${s.why}</div>
+      </div>
+      <div class="supp-timing">${s.timing}</div>`;
+    sec.appendChild(row);
+  });
+  container.appendChild(sec);
+}
+
+function renderCustomSupps() {
+  const list = document.getElementById('customSuppList');
+  list.innerHTML = '';
+  customSupps.forEach((s, i) => {
+    const checked = checkedToday['custom_' + i] || false;
+    const row = document.createElement('div');
+    row.className = 'supp-row';
+    row.innerHTML = `
+      <div class="supp-check ${checked ? 'checked' : ''}" id="chk-custom_${i}" role="checkbox" aria-checked="${checked}" onclick="toggleSupp('custom_${i}')">${checked ? '✓' : ''}</div>
+      <div class="supp-info">
+        <div class="supp-name">${s.name}</div>
+      </div>
+      <button onclick="removeCustomSupp(${i})" style="background:none;border:none;color:var(--border);font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0" aria-label="Remove">×</button>`;
+    list.appendChild(row);
+  });
+}
+
+function toggleSupp(id) {
+  checkedToday[id] = !checkedToday[id];
+  const el = document.getElementById('chk-' + id);
+  if (el) {
+    el.classList.toggle('checked', checkedToday[id]);
+    el.textContent = checkedToday[id] ? '✓' : '';
+    el.setAttribute('aria-checked', String(checkedToday[id]));
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const allRows = document.querySelectorAll('.supp-row');
+  const total   = allRows.length;
+  const taken   = Object.values(checkedToday).filter(Boolean).length;
+  const pct     = total > 0 ? Math.round((taken / total) * 100) : 0;
+  document.getElementById('progressText').textContent = `${taken} of ${total} taken today`;
+  document.getElementById('progressPct').textContent  = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function saveDaySupps() {
+  const today = todayKey();
+  const log   = loadSuppLog();
+  if (!log[today]) log[today] = {};
+  log[today].checked = { ...checkedToday };
+  log[today].phase   = currentPhase;
+  const total = document.querySelectorAll('.supp-row').length;
+  const taken = Object.values(checkedToday).filter(Boolean).length;
+  log[today].total = total;
+  log[today].taken = taken;
+  saveSuppLog(log);
+  renderHistory();
+  showToast('Supplement log saved ✓');
+}
+
+function addCustomSupp() {
+  const inp = document.getElementById('customSuppName');
+  const val = inp.value.trim();
+  if (!val) return;
+  customSupps.push({ name: val });
+  saveCustomSupps();
+  inp.value = '';
+  renderCustomSupps();
+  updateProgress();
+}
+
+function removeCustomSupp(i) {
+  customSupps.splice(i, 1);
+  saveCustomSupps();
+  renderCustomSupps();
+  updateProgress();
+}
+
+// ── 30-day history grid ───────────────────────────
+function renderHistory() {
+  const log   = loadSuppLog();
+  const grid  = document.getElementById('historyGrid');
+  grid.innerHTML = '';
+
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const entry = log[key];
+    const cell  = document.createElement('div');
+    cell.className = 'history-day-cell';
+    const dayNum = document.createElement('span');
+    dayNum.className = 'day-num';
+    dayNum.textContent = d.getDate();
+    cell.appendChild(dayNum);
+    if (entry && entry.taken !== undefined) {
+      const pct = entry.total > 0 ? entry.taken / entry.total : 0;
+      if (pct >= 0.9)      cell.classList.add('full');
+      else if (pct > 0)    cell.classList.add('has-data');
+      cell.title = `${d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}: ${entry.taken || 0}/${entry.total || 0} taken`;
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── Init ──────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  customSupps = loadCustomSupps();
+  const detected = detectPhaseFromPeriods();
+  if (detected) {
+    setSupPhase(detected.phase);
+    document.getElementById('suppCycleDay').textContent = `Day ${detected.day} · ${phaseNames[detected.phase].days}`;
+  } else {
+    setSupPhase('follicular'); // sensible default
+  }
+  renderHistory();
+});
+
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const i=document.getElementById('toggleIcon'),l=document.getElementById('toggleLabel');if(t==='dark'){if(i)i.textContent='☀️';if(l)l.textContent='Light';}else{if(i)i.textContent='🌙';if(l)l.textContent='Dark';}}
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'light',n=c==='dark'?'light':'dark';applyTheme(n);localStorage.setItem('hormone_tracker_theme',n);}
+(function(){applyTheme(localStorage.getItem('hormone_tracker_theme')||'light');})();
+</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Symptom Decoder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .decoder-intro{font-size:13px;font-weight:400;color:var(--muted);text-align:center;max-width:480px;margin:0 auto 1.5rem;line-height:1.7}
+    .symptom-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;margin-bottom:2rem}
+    .symptom-btn{background:none;border:0.5px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'Jost',sans-serif;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all 0.2s;text-align:left;line-height:1.4;letter-spacing:0.02em}
+    .symptom-btn:hover{border-color:var(--sand);color:var(--sand-dark);background:var(--sand-pale)}
+    .symptom-btn.active{border-color:var(--sand);background:var(--sand-pale);color:var(--sand-dark)}
+    .symptom-btn .s-icon{display:block;font-size:16px;margin-bottom:4px}
+    .category-label{font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin:1.25rem 0 0.5rem;grid-column:1/-1}
+    .result-card{background:var(--sand-pale);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.4rem;margin-bottom:1rem;animation:fadeUp 0.3s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .result-empty{text-align:center;font-size:13px;color:var(--border);font-style:italic;padding:2rem 0}
+    .result-symptom-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--sand-dark);margin-bottom:0.75rem}
+    .result-block{margin-bottom:0.875rem}
+    .result-block-label{font-size:10px;font-weight:600;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:0.4rem}
+    .result-text{font-size:13px;font-weight:400;color:var(--text);line-height:1.75}
+    .result-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px}
+    .result-list li{font-size:12px;font-weight:400;color:var(--text);line-height:1.6;padding-left:14px;position:relative}
+    .result-list li::before{content:'✦';position:absolute;left:0;color:var(--sand);font-size:8px;top:4px}
+    .result-source{font-size:10px;color:var(--muted);font-style:italic;text-align:right;margin-top:0.75rem;border-top:0.5px solid var(--border);padding-top:0.5rem}
+    .ask-badge{display:inline-block;background:#fff3e0;border:0.5px solid #e8c070;color:#a0702a;font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:3px 9px;border-radius:10px;margin-right:6px}
+    [data-theme="dark"] .result-card{background:#231c15}
+    [data-theme="dark"] .symptom-btn.active,[data-theme="dark"] .symptom-btn:hover{background:#2a2118}
+    [data-theme="dark"] .ask-badge{background:#2a2010;border-color:#5a4020;color:#d4a050}
+  </style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+  <span class="toggle-icon" id="toggleIcon">🌙</span>
+  <span id="toggleLabel">Dark</span>
+</button>
+
+<div class="app">
+  <div class="toast" id="toast">Saved ✓</div>
+
+  <header class="header">
+    <div class="arch-decoration" aria-hidden="true">
+      <svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" width="120" height="60">
+        <path d="M10,60 Q10,10 60,10 Q110,10 110,60" fill="none" stroke="#c9a96e" stroke-width="0.8" opacity="0.6"/>
+        <path d="M20,60 Q20,18 60,18 Q100,18 100,60" fill="none" stroke="#c9a96e" stroke-width="0.7" opacity="0.5"/>
+        <path d="M30,60 Q30,26 60,26 Q90,26 90,60" fill="none" stroke="#c9a96e" stroke-width="0.6" opacity="0.4"/>
+      </svg>
+    </div>
+    <h1>Symptom Decoder</h1>
+    <p style="font-size:12px;color:var(--muted);margin-top:0.5rem;font-style:italic;letter-spacing:0.04em">What your body is telling you</p>
+  </header>
+
+  <div style="text-align:center;margin-top:0.75rem;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+    <a href="index.html" class="back-link">← Daily tracker</a>
+    <a href="phases.html" class="back-link">Phase guide</a>
+    <a href="supplements.html" class="back-link">Supplements</a>
+  </div>
+  <p style="text-align:center;font-size:10px;color:var(--muted);margin:0.5rem 0 1rem;font-style:italic">Sourced from <em>Hormone Intelligence</em> — Aviva Romm, MD</p>
+
+  <p class="decoder-intro">Tap any symptom to reveal its root-cause explanation, what it means for your fertility journey, and what to bring to your practitioner.</p>
+
+  <div class="symptom-grid" id="symptomGrid"></div>
+
+  <div id="resultArea">
+    <p class="result-empty" id="resultEmpty">Select a symptom above to decode it.</p>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const symptoms = [
+  // ── Period & Bleed
+  { id:'brown-spotting',    icon:'🟤', cat:'Period & Bleed',    label:'Brown spotting before period',
+    rootCause:'Brown blood before the period starts is old, oxidised blood that should have been expelled in the previous cycle. Romm identifies this as a hallmark sign of low progesterone (luteal phase deficiency) or Kidney Yang deficiency in TCM. The corpus luteum isn\'t sustaining progesterone long enough to hold the lining.',
+    fertility:'Low progesterone directly prevents successful implantation. The uterine lining begins to break down before a fertilised egg has time to implant. Romm notes this is one of the most common and overlooked causes of early cycle loss and failed conception.',
+    rootApproach:['Vitex (Chaste tree) for 3–6 months — lengthens luteal phase, supports corpus luteum','Vitamin B6 as P5P — directly supports progesterone production','Magnesium glycinate — reduces cortisol which suppresses progesterone','Reduce stress: HPA axis (cortisol) directly competes with progesterone production','Acupuncture: Kidney Yang warming protocol in luteal phase'],
+    test:'Day 21 (or 7 days post-ovulation) progesterone blood test. Romm: optimal level for implantation is >30 nmol/L. Below this confirms luteal phase deficiency.',
+    source:'Hormone Intelligence, Ch. 12 & 15 — Aviva Romm MD' },
+
+  { id:'clotty-period',     icon:'🔴', cat:'Period & Bleed',    label:'Clotty or dark period',
+    rootCause:'Clots and dark/purple blood indicate Blood stagnation in TCM — the blood is not moving freely. Functionally, this often reflects estrogen dominance: too much estrogen relative to progesterone causes excessive endometrial buildup. Impaired liver detoxification and poor estrogen metabolism (via the gut microbiome) are Romm\'s primary root causes.',
+    fertility:'Estrogen dominance disrupts the LH surge needed for ovulation and creates an inflammatory uterine environment. Romm links clotty periods to endometriosis, fibroids, and poor implantation outcomes.',
+    rootApproach:['Cruciferous vegetables daily — DIM supports liver estrogen clearance','Reduce red meat and alcohol — both raise estrogen levels (Romm, Ch. 6)','Heal gut microbiome: fermented foods, probiotics — estrobolome bacteria clear estrogen','Castor oil packs in follicular phase — improve pelvic circulation','Turmeric/curcumin — anti-inflammatory, moves stagnation'],
+    test:'Estradiol (E2), progesterone ratio. Consider DUTCH hormone test to map estrogen metabolism pathways (2-OH vs 16-OH estrone ratio). Pelvic ultrasound to rule out fibroids or endometriosis.',
+    source:'Hormone Intelligence, Ch. 4, 6, 12 & 14 — Aviva Romm MD' },
+
+  { id:'scanty-period',     icon:'💧', cat:'Period & Bleed',    label:'Scanty or very light period',
+    rootCause:'Light flow (less than 2–3 days) suggests thin uterine lining, Blood deficiency, or insufficient estrogen to build the endometrium. In TCM: Kidney Jing and Blood depletion. Romm identifies root causes as: chronic stress suppressing estrogen via the HPA axis, over-exercise, under-eating/low body fat, or primary ovarian insufficiency (POI).',
+    fertility:'The uterine lining is the "soil" an embryo implants into. Romm is explicit: a thin lining is a direct fertility obstacle. Less than 7mm at ovulation reduces implantation success significantly.',
+    rootApproach:['Nourish Blood: iron-rich foods, bone broth, dark leafy greens, beets','Reduce exercise intensity — hypothalamic amenorrhea from overexercise is a primary cause','Increase healthy fats: avocado, omega-3s, eggs — cholesterol is the building block of estrogen','Shatavari — Yin tonic, endometrial support','Acupuncture: follicular phase Yin nourishing protocol'],
+    test:'Day 3 FSH, LH, estradiol, AMH. Transvaginal ultrasound to measure endometrial thickness mid-cycle. Rule out hypothalamic amenorrhea (if also exercising heavily or underweight).',
+    source:'Hormone Intelligence, Ch. 3, 7, 11 & 15 — Aviva Romm MD' },
+
+  { id:'heavy-period',      icon:'🌊', cat:'Period & Bleed',    label:'Heavy period',
+    rootCause:'Heavy bleeding indicates excess estrogen relative to progesterone, often combined with inflammation. Romm identifies estrogen dominance (impaired liver/gut clearance), uterine fibroids, adenomyosis, or endometriosis as primary causes. Red meat more than once/week, alcohol, and low fibre diet all worsen this.',
+    fertility:'Severe blood loss depletes iron and ferritin — Romm links low ferritin to anovulation and poor egg quality. Heavy periods also indicate the hormonal environment is not optimal for implantation.',
+    rootApproach:['Eliminate red meat and alcohol during the plan — both measurably raise estrogen','Cruciferous veg, ground flaxseed, legumes — support estrogen clearance','Iron bisglycinate + Vitamin C — replenish depleted iron','Green tea extract (EGCG) — Romm cites 32.6% reduction in fibroid volume in one study (Ch. 16)','Address insulin resistance if present — amplifies estrogen dominance'],
+    test:'Full blood count, ferritin, iron studies. Pelvic ultrasound (rule out fibroids, adenomyosis, polyps). Estradiol and progesterone ratio.',
+    source:'Hormone Intelligence, Ch. 4, 6, 12 & 16 — Aviva Romm MD' },
+
+  { id:'painful-period',    icon:'😣', cat:'Period & Bleed',    label:'Painful cramps',
+    rootCause:'Prostaglandins (inflammatory signalling molecules) cause uterine contractions. Romm explains: a diet high in omega-6 fats and low in omega-3s amplifies prostaglandin activity, worsening cramps. Root causes include inflammation, magnesium deficiency, and — if severe — possible endometriosis. She notes: "Pain is never normal. Severe pain always has a root cause."',
+    fertility:'Severe cramping warrants investigation for endometriosis — a condition Romm notes is associated with significantly reduced fertility if untreated. Cold in the uterus (TCM) is a pattern she links to implantation failure.',
+    rootApproach:['Omega-3 EPA/DHA 2–3g daily — reduces inflammatory prostaglandins (Romm, Ch. 6)','Magnesium glycinate 300–400mg — reduces uterine spasm','Ginger tea during bleed — Romm endorses as anti-inflammatory, cramp-relieving','Eliminate trans fats and sugar — directly worsen prostaglandin activity','Castor oil packs in follicular phase — reduces pelvic congestion'],
+    test:'If cramps are severe (>6/10 or require NSAIDs regularly): pelvic ultrasound and referral to rule out endometriosis or adenomyosis. CA-125 if endometriosis suspected. Romm: laparoscopy is the only definitive test for endometriosis.',
+    source:'Hormone Intelligence, Ch. 4, 6, 12 & 14 — Aviva Romm MD' },
+
+  // ── Ovulation & Cycle
+  { id:'no-ewcm',           icon:'🔍', cat:'Ovulation & Cycle', label:'No egg-white mucus',
+    rootCause:'Egg-white cervical mucus (EWCM) is produced by the cervix under rising estrogen. Its absence suggests insufficient estrogen, poor cervical gland function, dehydration, or antihistamine/decongestant use (which dries mucus). Romm also notes that hormonal birth control, even after stopping, can suppress cervical mucus production for months.',
+    fertility:'EWCM is essential — it keeps sperm alive for 3–5 days and guides them to the egg. Without it, the fertile window is dramatically reduced even if ovulation occurs. Romm calls it one of the most important free fertility signs.',
+    rootApproach:['Increase water intake significantly — dehydration is the simplest cause','Evening primrose oil (follicular phase only, stop at ovulation) — supports cervical mucus','Vitamin E and omega-3s — support estrogen and mucus quality','NAC 600mg — supports mucus quality, particularly in PCOS','Avoid antihistamines in the fertile window'],
+    test:'Transvaginal ultrasound mid-cycle to confirm follicle development and endometrial response to estrogen. Day 3 estradiol if consistently absent.',
+    source:'Hormone Intelligence, Ch. 3 & 15 — Aviva Romm MD' },
+
+  { id:'no-ovulation',      icon:'⭕', cat:'Ovulation & Cycle', label:'Irregular or no ovulation',
+    rootCause:'Anovulation (not ovulating) is the single most common cause of female infertility. Romm identifies three primary root causes: (1) PCOS — insulin resistance is the driver in 50–70% of cases; (2) Hypothalamic amenorrhea — caused by over-exercise, under-eating, or chronic stress suppressing GnRH; (3) Thyroid dysfunction — TSH above 2.5 disrupts the HPO axis.',
+    fertility:'No ovulation = no egg available for fertilisation and no progesterone produced, making conception impossible. Romm: "Anovulatory infertility is among the most treatable forms of infertility — when you address the root cause."',
+    rootApproach:['Rule out and address PCOS: eliminate sugar, myo-inositol 2–4g, low-GI diet','Rule out hypothalamic amenorrhea: reduce exercise, increase calories, address stress','Full thyroid panel — Romm frequently finds undiagnosed subclinical hypothyroidism','Vitex for 3–6 months — promotes regular ovulation (Romm, Ch. 15)','Seed cycling: flax/pumpkin seeds follicular, sunflower/sesame luteal'],
+    test:'Day 3 FSH, LH, estradiol, AMH, prolactin. Full thyroid panel (TSH, FT3, FT4, TPO antibodies). Fasting insulin and glucose. Pelvic ultrasound (antral follicle count, morphology). Day 21 progesterone to confirm ovulation.',
+    source:'Hormone Intelligence, Ch. 3, 7, 13 & 15 — Aviva Romm MD' },
+
+  { id:'short-luteal',      icon:'📅', cat:'Ovulation & Cycle', label:'Short luteal phase (<10 days)',
+    rootCause:'The luteal phase should be 10–16 days. Shorter than 10 days indicates the corpus luteum isn\'t sustaining adequate progesterone. Romm\'s root causes: chronic stress (cortisol competes with and suppresses progesterone), Kidney Yang deficiency (TCM), subclinical thyroid disease, and insufficient LH at ovulation.',
+    fertility:'A short luteal phase means the uterine lining begins to break down before a fertilised egg can implant. Romm identifies this as a direct and often missed cause of repeated early pregnancy loss and failed cycles.',
+    rootApproach:['Vitex (Chaste tree) consistently for 3–6 months — lengthens luteal phase','Vitamin B6 as P5P — directly supports progesterone production','Reduce HPA axis stress: Ashwagandha, breathwork, sleep prioritisation','Acupuncture: luteal phase Kidney Yang protocol','Treat thyroid if TSH is suboptimal (>2.5)'],
+    test:'Day 21 progesterone (7 days post-confirmed ovulation). Full thyroid panel. Track BBT for 3 cycles to confirm luteal phase length. DUTCH hormone test for full progesterone and cortisol picture.',
+    source:'Hormone Intelligence, Ch. 2, 7, 12 & 15 — Aviva Romm MD' },
+
+  { id:'irregular-cycles',  icon:'🔄', cat:'Ovulation & Cycle', label:'Irregular cycle length',
+    rootCause:'Cycle length varying by more than 3–4 days between cycles suggests irregular ovulation. Romm\'s root causes: HPA axis disruption (stress, poor sleep, blood sugar instability), thyroid dysfunction, PCOS, or perimenopause. She notes that circadian rhythm disruption — from late nights, shift work, or phone screen exposure — directly disrupts the HPO axis.',
+    fertility:'Irregular cycles make it very difficult to predict the fertile window, and often indicate inconsistent ovulation quality. Romm emphasises sleep and circadian rhythm as foundational — not optional — for reproductive health.',
+    rootApproach:['Prioritise sleep: dark room, phone off by 9pm, consistent wake time (Romm, Ch. 8)','Blood sugar stability: no skipping meals, protein with every meal, no refined sugar','Vitex for 3–6 months — regulates cycle length','Adaptogens: Ashwagandha, Shatavari — HPA axis regulation','Address thyroid: even TSH 2.5–4.0 can cause cycle irregularity'],
+    test:'Full thyroid panel. Day 3 FSH/LH/estradiol. Fasting glucose and insulin. Track BBT and OPK for 3 cycles to map ovulation pattern.',
+    source:'Hormone Intelligence, Ch. 2, 7, 8 & 13 — Aviva Romm MD' },
+
+  // ── Mood & Mind
+  { id:'pms-mood',          icon:'🌪️', cat:'Mood & Mind',       label:'PMS mood swings / irritability',
+    rootCause:'Romm is unequivocal: "PMS is not normal — it is a sign of hormonal imbalance." The primary root cause is estrogen dominance relative to low progesterone in the luteal phase, combined with declining serotonin. Magnesium deficiency (depleted by stress and sugar) and B6 deficiency amplify both. Liver congestion impairing estrogen clearance perpetuates the cycle.',
+    fertility:'Severe PMS often signals the same hormonal pattern that impairs implantation — estrogen dominance + low progesterone. Addressing PMS root causes directly improves luteal phase quality.',
+    rootApproach:['Magnesium glycinate 300–400mg — Romm calls this the most underused PMS remedy (Ch. 12)','Vitamin B6 as P5P — serotonin co-factor, progesterone support','Vitex for 3–6 months — rebalances estrogen/progesterone ratio','Eliminate sugar and alcohol in luteal phase — both dramatically worsen PMS','Saffron — evidence-based for mood support (Romm, Ch. 12)'],
+    test:'DUTCH hormone test to map estrogen metabolism and luteal progesterone. Magnesium RBC levels (serum is unreliable). Thyroid panel.',
+    source:'Hormone Intelligence, Ch. 4, 7 & 12 — Aviva Romm MD' },
+
+  { id:'anxiety-cycle',     icon:'😰', cat:'Mood & Mind',       label:'Cycle-related anxiety',
+    rootCause:'Progesterone\'s metabolite allopregnanolone acts as a natural anxiolytic — when progesterone is low (luteal phase deficiency, anovulation), anxiety rises. Romm also identifies HPA axis dysregulation: cortisol and progesterone share precursors, so chronic stress depletes progesterone and amplifies anxiety in a self-reinforcing loop.',
+    fertility:'Chronic anxiety elevates cortisol which suppresses the HPO axis, disrupts ovulation, and reduces implantation success. Romm: "Higher levels of stress hormones may double infertility risk" (Ch. 15). Mind-body practices are therapeutic, not optional.',
+    rootApproach:['Magnesium glycinate — most calming form, supports GABA and progesterone','Ashwagandha — Romm\'s primary adaptogen for HPA axis and cortisol regulation','Mind-body practices: meditation, CBT, yoga — Romm cites 34% pregnancy rate in women who completed a relaxation program (Ch. 15)','Omega-3 DHA — reduces HPA axis reactivity','Address blood sugar: anxiety spikes often follow blood sugar crashes'],
+    test:'24-hour salivary cortisol (4-point). DUTCH test for cortisol and sex hormone pattern. Rule out subclinical thyroid.',
+    source:'Hormone Intelligence, Ch. 2, 7 & 15 — Aviva Romm MD' },
+
+  { id:'brain-fog',         icon:'🌫️', cat:'Mood & Mind',       label:'Brain fog & poor concentration',
+    rootCause:'Estrogen supports dopamine and serotonin — its decline (post-ovulation, luteal, or chronically with low estrogen) causes cognitive dipping. Romm also identifies blood sugar dysregulation as a primary driver: the brain runs on glucose and crashes when insulin signalling is impaired. Thyroid dysfunction is the most commonly missed root cause of persistent brain fog in women.',
+    fertility:'Brain fog often accompanies the same hormonal patterns (thyroid dysfunction, blood sugar instability, stress) that impair ovulation and implantation. Romm treats it as a systemic signal, not an isolated symptom.',
+    rootApproach:['Full thyroid panel — Romm finds this frequently missed in women with brain fog','Stabilise blood sugar: protein at every meal, no refined carbohydrates, no skipped meals','Omega-3 DHA 1–2g — essential for neurological function','Lion\'s Mane mushroom — emerging evidence for cognitive support','Reduce alcohol completely — even moderate intake impairs memory and liver function (Romm, Ch. 6)'],
+    test:'Full thyroid panel (TSH, FT3, FT4, reverse T3, TPO antibodies). Fasting glucose and insulin. Full blood count (anaemia causes brain fog). Ferritin.',
+    source:'Hormone Intelligence, Ch. 2, 6 & 8 — Aviva Romm MD' },
+
+  // ── Skin, Hair & Body
+  { id:'acne-chin',         icon:'🔴', cat:'Skin, Hair & Body', label:'Acne (chin / jaw)',
+    rootCause:'Chin and jaw acne is a hormonal signature: excess androgens (testosterone) stimulating sebaceous glands. Romm identifies root causes as insulin resistance (the most common driver — excess insulin stimulates androgen production in the ovaries), PCOS, and impaired liver estrogen clearance. She notes: "High-sugar and high-carbohydrate diets are a primary trigger" (Ch. 4).',
+    fertility:'Excess androgens are the hallmark of PCOS — the most common hormonal cause of anovulation and subfertility. Addressing chin acne often means addressing the same root cause blocking ovulation.',
+    rootApproach:['Eliminate refined sugar and refined carbohydrates — directly lowers insulin and androgens','Myo-inositol 2–4g — improves insulin sensitivity and reduces androgens in PCOS','Zinc 25–30mg — reduces 5-alpha reductase (androgen activity) and is anti-inflammatory','Spearmint tea 2 cups daily — shown to reduce free testosterone','Liver support: cruciferous veg, DIM, reduce alcohol'],
+    test:'Free testosterone, DHEAS, SHBG, fasting insulin and glucose. If other PCOS signs present: pelvic ultrasound (antral follicle count).',
+    source:'Hormone Intelligence, Ch. 4, 6 & 13 — Aviva Romm MD' },
+
+  { id:'hair-thinning',     icon:'🦱', cat:'Skin, Hair & Body', label:'Hair thinning / shedding',
+    rootCause:'Romm identifies thyroid dysfunction as the most common missed cause of hair loss in women — including subclinical hypothyroidism that falls within "normal" lab ranges. Iron deficiency (ferritin below 70) is her second most common finding. PCOS-related androgen excess and post-pill hormonal crash are also common triggers.',
+    fertility:'Thyroid dysfunction and low ferritin are both directly linked to anovulation, poor egg quality, and early pregnancy loss. Hair thinning is often the visible sign of a systemic deficiency that is also affecting reproductive function.',
+    rootApproach:['Full thyroid panel (TSH, FT3, FT4, reverse T3, TPO antibodies) — non-negotiable','Ferritin testing — optimal range for hair and fertility is 70–100 ng/mL','Iron bisglycinate with Vitamin C if ferritin is low','Zinc 25mg — essential for thyroid hormone production and hair follicle health','Biotin 2.5–5mg — supports hair growth (test biotin status first as supplements skew lab results)'],
+    test:'Full thyroid panel. Iron studies including ferritin. Full blood count. Free testosterone, DHEAS (if PCOS suspected). Zinc and B12 levels.',
+    source:'Hormone Intelligence, Ch. 2, 4 & 6 — Aviva Romm MD' },
+
+  { id:'bloating',          icon:'🫃', cat:'Skin, Hair & Body', label:'Bloating / water retention',
+    rootCause:'Cyclic bloating in the luteal phase is driven by progesterone slowing gut motility, combined with estrogen-driven water retention. Romm identifies gut dysbiosis as the deeper root: an imbalanced microbiome produces an enzyme (beta-glucuronidase) that reactivates excreted estrogen, raising circulating estrogen and worsening retention.',
+    fertility:'Gut dysbiosis impairs estrogen clearance — a key driver of estrogen dominance that Romm links to poor implantation, endometriosis, and fibroids. Healing the gut is a foundational fertility step.',
+    rootApproach:['Fermented foods daily — kimchi, kefir, sauerkraut (restore estrobolome bacteria)','Fibre 25–35g daily — feeds beneficial bacteria, speeds estrogen excretion','Reduce dairy (A1 casein) and gluten if inflammatory symptoms present','Magnesium — promotes gut motility and reduces water retention','Probiotic with Lactobacillus strains — Romm recommends L. rhamnosus, L. reuteri, L. crispatus (Ch. 15)'],
+    test:'Comprehensive stool test (gut microbiome and beta-glucuronidase activity). DUTCH test for estrogen metabolism. Food sensitivity panel if bloating is severe.',
+    source:'Hormone Intelligence, Ch. 6 & 9 — Aviva Romm MD' },
+
+  { id:'fatigue',           icon:'😴', cat:'Skin, Hair & Body', label:'Fatigue & low energy',
+    rootCause:'Romm\'s most common root causes of fatigue in women: (1) Subclinical hypothyroidism — the most missed diagnosis; (2) Iron deficiency / anaemia — ferritin below 30 causes fatigue even when haemoglobin is normal; (3) HPA axis dysregulation — chronic stress depletes cortisol rhythm; (4) Blood sugar instability — the afternoon energy crash pattern.',
+    fertility:'All four root causes of fatigue also directly impair reproductive function. Romm notes fatigue is the body\'s loudest signal that something is depleted — ignoring it is ignoring a direct message about your hormonal health.',
+    rootApproach:['Full thyroid panel and ferritin — test first, supplement based on results','Blood sugar stability: protein + fat at every meal, no skipping meals','Ashwagandha — HPA axis regulation, energy without stimulating','B12 (methylcobalamin) and iron if deficient','Prioritise sleep: Romm notes sleeping less than 7 hours interferes with ovulation and egg quality (Ch. 15)'],
+    test:'Full thyroid panel. Iron studies, ferritin. Full blood count. B12, folate, Vitamin D. Fasting glucose. 4-point salivary cortisol if fatigue is worse in the morning.',
+    source:'Hormone Intelligence, Ch. 2, 6 & 8 — Aviva Romm MD' },
+
+  // ── Fertility Specific
+  { id:'recurrent-loss',    icon:'💔', cat:'Fertility',          label:'Recurrent early loss / miscarriage',
+    rootCause:'Romm identifies the most common root causes: (1) Low progesterone / luteal phase defect — lining breaks down before embryo can establish; (2) Undiagnosed thyroid disease — TSH above 2.5 significantly increases miscarriage risk; (3) Chromosomal factors (age-related egg quality — addressed by CoQ10 and antioxidant protocol); (4) Immune dysregulation; (5) Blood clotting disorders.',
+    fertility:'Romm\'s approach: "Every miscarriage is your body\'s wisdom — and also information." She encourages thorough investigation rather than accepting "unexplained" as an answer. Most root causes are addressable.',
+    rootApproach:['Thyroid: test and optimise TSH to below 2.5 — this alone has resolved recurrent loss for many patients','CoQ10/Ubiquinol 400–600mg — improves egg chromosomal integrity','Vitamin D3 — Romm links low Vit D to increased miscarriage risk','Vitex + B6 — luteal phase and progesterone support','Folic acid as methylfolate 800mcg — always, especially with MTHFR variant'],
+    test:'Recurrent miscarriage panel: karyotyping (both partners), antiphospholipid antibodies, thrombophilia screen, Day 21 progesterone, full thyroid panel including TPO antibodies, NK cell activity, vitamin D, MTHFR gene variant. Romm also recommends semen analysis for partner.',
+    source:'Hormone Intelligence, Ch. 11 & 15 — Aviva Romm MD' },
+
+  { id:'low-amh',           icon:'📉', cat:'Fertility',          label:'Low AMH / diminished ovarian reserve',
+    rootCause:'AMH (Anti-Müllerian Hormone) reflects the quantity of remaining follicles. Romm is careful to distinguish quantity from quality: "A low AMH does not mean infertility — it means you have fewer eggs, but quality matters more than quantity." Primary root causes of accelerated ovarian ageing: oxidative stress, environmental toxin exposure, autoimmune thyroiditis, smoking, and endometriosis.',
+    fertility:'Romm has seen women with "very low AMH" conceive naturally after a dedicated 3–6 month protocol. She describes this in Ch. 11 as "First Aid for Your Ovaries" — her most comprehensive egg quality protocol. The 90-day egg development window means focused intervention can meaningfully improve outcomes.',
+    rootApproach:['CoQ10/Ubiquinol 400–600mg — the most evidence-based supplement for egg mitochondrial function','Dehydroepiandrosterone (DHEA) 25–75mg (only under practitioner supervision) — improves ovarian response','Melatonin 3mg at night — ovarian follicles are rich in melatonin (Romm, Ch. 2); protects eggs from oxidative stress','Reduce environmental toxin exposure: switch to clean body products, filtered water, avoid plastics (Romm, Ch. 10)','Omega-3 EPA/DHA + antioxidant-rich diet'],
+    test:'Baseline AMH, AFC (antral follicle count on transvaginal ultrasound), Day 3 FSH and estradiol. Full thyroid panel (autoimmune thyroiditis accelerates ovarian ageing). Consider environmental toxin panel.',
+    source:'Hormone Intelligence, Ch. 11 & 15 — Aviva Romm MD' },
+
+  { id:'pcos-signs',        icon:'⚡', cat:'Fertility',          label:'PCOS signs (acne, hair, cycles)',
+    rootCause:'Romm describes PCOS as "a complex constellation of factors" rather than a single hormone problem. The primary root cause in 50–70% of cases is insulin resistance — driven by diet, stress, microbiome imbalances, and environmental exposures. Insulin resistance triggers the ovaries to overproduce androgens and disrupts LH/FSH signalling, preventing ovulation.',
+    fertility:'PCOS is the most common cause of anovulatory infertility. Romm\'s message: "PCOS can be reversed." She has seen this in clinical practice repeatedly. The protocol requires consistency over 3–6 months addressing insulin resistance at its root.',
+    rootApproach:['Eliminate refined sugar, refined carbohydrates, and ultra-processed foods — most impactful single change','Myo-inositol 2–4g daily — Romm: evidence shows comparable efficacy to Metformin for insulin and ovulation','Reduce animal protein, increase plant protein — Romm cites 50% reduction in ovulatory infertility with this shift','Spearmint tea 2 cups daily — reduces free testosterone','Exercise 1–5 hours/week moderate intensity — improves insulin sensitivity'],
+    test:'Fasting insulin and glucose (HOMA-IR calculation). Free testosterone, DHEAS, SHBG. LH:FSH ratio. Pelvic ultrasound. AMH (often elevated in PCOS). Full thyroid panel.',
+    source:'Hormone Intelligence, Ch. 4, 6 & 13 — Aviva Romm MD' },
+
+  { id:'low-libido',        icon:'🌸', cat:'Fertility',          label:'Low libido',
+    rootCause:'Romm challenges the assumption that low libido is always hormonal: "Hormones are the least likely culprit in cases of low desire in women at any age." She cites Dr. Lorraine Dennerstein\'s research showing relationship quality and satisfaction contribute more to sexual desire than hormones. When hormonal, testosterone and estrogen deficiency, hypothyroidism, and HPA axis burnout are the root causes.',
+    fertility:'For conception, libido naturally peaks around ovulation (testosterone briefly rises). If there\'s no desire during the fertile window, timing becomes difficult. Romm encourages addressing both the relational and physiological dimensions together.',
+    rootApproach:['Relationship connection: quality time, honest communication, safety','Ashwagandha — shown to significantly improve female sexual function in clinical trials','Shatavari — Ayurvedic female tonic, supports desire and energy','Address thyroid and adrenal health — burnout and hypothyroidism are common drivers','Romm: "Cultivate creativity — dance, gardening, flow activities create hormonal harmony" (Ch. 15)'],
+    test:'Full thyroid panel. Free testosterone. Estradiol. 4-point salivary cortisol. Rule out depression (overlap is significant).',
+    source:'Hormone Intelligence, Ch. 2 & 17 — Aviva Romm MD' },
+];
+
+let activeId = null;
+
+function buildGrid() {
+  const grid = document.getElementById('symptomGrid');
+  const cats = [...new Set(symptoms.map(s => s.cat))];
+  cats.forEach(cat => {
+    const lbl = document.createElement('div');
+    lbl.className = 'category-label';
+    lbl.textContent = cat;
+    grid.appendChild(lbl);
+    symptoms.filter(s => s.cat === cat).forEach(s => {
+      const btn = document.createElement('button');
+      btn.className = 'symptom-btn';
+      btn.id = 'btn-' + s.id;
+      btn.innerHTML = `<span class="s-icon">${s.icon}</span>${s.label}`;
+      btn.addEventListener('click', () => showResult(s.id));
+      grid.appendChild(btn);
+    });
+  });
+}
+
+function showResult(id) {
+  const s = symptoms.find(x => x.id === id);
+  if (!s) return;
+
+  document.querySelectorAll('.symptom-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + id).classList.add('active');
+  activeId = id;
+
+  const area = document.getElementById('resultArea');
+  document.getElementById('resultEmpty').style.display = 'none';
+
+  area.innerHTML = `
+    <div class="result-card">
+      <div class="result-symptom-name">${s.icon} ${s.label}</div>
+
+      <div class="result-block">
+        <div class="result-block-label">Root cause (what your body is telling you)</div>
+        <div class="result-text">${s.rootCause}</div>
+      </div>
+
+      <div class="result-block">
+        <div class="result-block-label">What this means for your fertility journey</div>
+        <div class="result-text">${s.fertility}</div>
+      </div>
+
+      <div class="result-block">
+        <div class="result-block-label">Root-cause approach</div>
+        <ul class="result-list">${s.rootApproach.map(a => `<li>${a}</li>`).join('')}</ul>
+      </div>
+
+      <div class="result-block">
+        <div class="result-block-label"><span class="ask-badge">Ask your practitioner</span>Tests to consider</div>
+        <div class="result-text">${s.test}</div>
+      </div>
+
+      <div class="result-source">${s.source}</div>
+    </div>`;
+
+  area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+buildGrid();
+
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const i=document.getElementById('toggleIcon'),l=document.getElementById('toggleLabel');if(t==='dark'){if(i)i.textContent='☀️';if(l)l.textContent='Light';}else{if(i)i.textContent='🌙';if(l)l.textContent='Dark';}}
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'light',n=c==='dark'?'light':'dark';applyTheme(n);localStorage.setItem('hormone_tracker_theme',n);}
+(function(){applyTheme(localStorage.getItem('hormone_tracker_theme')||'light');})();
+</script>
+</body>
+</html>
